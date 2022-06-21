@@ -1,16 +1,14 @@
 {
-	"name": "rahat-agency",
+	"name": "rahat-palika-app",
 	"version": "2.5.0",
 	"homepage": "/",
-	"description": "Front end web interface for Rahat Agency",
+	"description": "Front end web interface for Rahat Palika App",
 	"main": "index.js",
 	"scripts": {
 		"start": "react-scripts start",
 		"build": "react-scripts build",
 		"react-test": "react-scripts test",
-		"eject": "react-scripts eject",
-		"test": "jest --coverage",
-		"send-coverage": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+		"eject": "react-scripts eject"
 	},
 	"keywords": [],
 	"author": {
@@ -69,10 +67,8 @@
 		"react-to-print": "^2.13.0",
 		"react-toast-notifications": "^2.4.0",
 		"reactstrap": "^8.4.1",
-		"rumsan-ui": "^1.0.11",
 		"sweetalert2": "^9.17.2",
-		"xlsx": "^0.17.0",
-		"yup": "^0.29.3"
+		"xlsx": "^0.17.0"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
