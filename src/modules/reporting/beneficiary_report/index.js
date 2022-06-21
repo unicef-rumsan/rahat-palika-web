@@ -13,7 +13,7 @@ const BeneficiaryReport = () => {
 	// const [projects, setProjects] = useState();
 	const [projectList, setProjectList] = useState([]);
 
-	const [importing, setImporting] = useState(false);
+	const [importing] = useState(false);
 
 	const [beneficiaryData, setBeneficiaryData] = useState({
 		beneficiaryByGender: [],

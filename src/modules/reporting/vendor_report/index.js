@@ -13,7 +13,7 @@ const DUMMY_PACKAGE_DATA = [
 	{ count: 30, name: 'Redeemed package', id: '5' }
 ];
 const VendorReport = () => {
-	const [importing, setImporting] = useState(false);
+	const [importing] = useState(false);
 
 	const [formData, setFormData] = useState({
 		from: '',

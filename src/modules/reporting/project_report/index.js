@@ -19,16 +19,11 @@ const { PAGE_LIMIT } = APP_CONSTANTS;
 
 const ProjectReport = () => {
 	const { listAid, getProjectTokenBalance, getProjectPackageBalance } = useContext(AidContext);
-	const {
-		listBeneficiary,
-		beneficiaryReport,
-		getTotalBeneficairyTokenBalances,
-		getTotalBeneficiaryPackages
-	} = useContext(BeneficiaryContext);
+	const { listBeneficiary, beneficiaryReport, getTotalBeneficairyTokenBalances } = useContext(BeneficiaryContext);
 	const { appSettings } = useContext(AppContext);
-	const { getTotalVendorsBalances, getVendorDetails, listVendor } = useContext(VendorContext);
+	const { listVendor } = useContext(VendorContext);
 
-	const [importing, setImporting] = useState(false);
+	const [importing] = useState(false);
 	const [projectList, setProjectList] = useState([]);
 	const [projectId, setProjectId] = useState(null);
 

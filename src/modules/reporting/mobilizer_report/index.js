@@ -3,7 +3,7 @@ import { Button, Card, CardBody, CardTitle, Input, Label } from 'reactstrap';
 import ProjectBarDiagram from './project_bar_diagram';
 
 const MobilizerReport = () => {
-	const [importing, setImporting] = useState(false);
+	const [importing] = useState(false);
 
 	const [formData, setFormData] = useState({
 		from: '',
