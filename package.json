@@ -31,22 +31,12 @@
 	"devDependencies": {
 		"@babel/preset-env": "^7.16.5",
 		"@babel/preset-react": "^7.16.5",
-		"axios-mock-adapter": "^1.18.1",
-		"babel-jest": "^27.3.1",
-		"coveralls": "^3.1.1",
-		"enzyme": "^3.11.0",
 		"eslint-config-prettier": "^8.1.0",
 		"eslint-plugin-prettier": "^3.3.1",
-		"fake-indexeddb": "^3.1.7",
-		"jest": "^27.3.1",
 		"mixin-deep": "^2.0.1",
-		"prettier": "2.2.1",
-		"react-test-renderer": "^17.0.2",
-		"regenerator-runtime": "^0.13.9",
-		"ts-jest": "^27.0.7"
+		"prettier": "2.2.1"
 	},
 	"dependencies": {
-		"add": "^2.0.6",
 		"apexcharts": "^3.28.3",
 		"axios": "^0.21.1",
 		"bootstrap-switch-button-react": "^1.2.0",
@@ -79,11 +69,9 @@
 		"react-to-print": "^2.13.0",
 		"react-toast-notifications": "^2.4.0",
 		"reactstrap": "^8.4.1",
-		"redux-devtools-extension": "^2.13.8",
 		"rumsan-ui": "^1.0.11",
 		"sweetalert2": "^9.17.2",
 		"xlsx": "^0.17.0",
-		"yarn": "^1.22.4",
 		"yup": "^0.29.3"
 	},
 	"eslintConfig": {
