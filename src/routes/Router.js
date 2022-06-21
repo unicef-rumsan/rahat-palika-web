@@ -42,21 +42,9 @@ const ListUsers = lazy(() => import('../modules/user/list'));
 const AddUser = lazy(() => import('../modules/user/add'));
 const UserDetails = lazy(() => import('../modules/user/edit'));
 
-// Kobo tool
-const ListKobotool = lazy(() => import('../modules/kobotool/list'));
-const KoboToolboxSetting = lazy(() => import('../modules/kobotool/settings'));
-const KoboToolboxFormDetails = lazy(() => import('../modules/kobotool/forms/details'));
-
 // Aid connect
 const AidConnectList = lazy(() => import('../modules/aid_connect/list'));
 const AidConnectCreateForm = lazy(() => import('../modules/aid_connect/create_forms'));
-
-// Reporting
-const Reporting = lazy(() => import('../modules/reporting'));
-const ReportProject = lazy(() => import('../modules/reporting/project_report'));
-const ReportBeneficiary = lazy(() => import('../modules/reporting/beneficiary_report'));
-const ReportMobilizer = lazy(() => import('../modules/reporting/mobilizer_report'));
-const ReportVendor = lazy(() => import('../modules/reporting/vendor_report'));
 
 // Vendor
 const Vendor = lazy(() => import('../modules/vendor'));
@@ -269,16 +257,6 @@ let AppRoutes = [
 		showInSidebar: false
 	},
 	{
-		path: '/kobo-toolbox-setting',
-		name: 'KoboToolboxSetting',
-		component: KoboToolboxSetting
-	},
-	{
-		path: '/kobo-toolbox/:id',
-		name: 'KoboToolboxFormDetails',
-		component: KoboToolboxFormDetails
-	},
-	{
 		path: '/aid-connect/form',
 		name: 'AidConnectCreateForm',
 		component: AidConnectCreateForm
@@ -289,27 +267,6 @@ let AppRoutes = [
 		component: NotificationList
 	},
 	{
-		path: '/report-project',
-		name: 'ReportProject',
-		component: ReportProject
-	},
-	{
-		path: '/report-beneficiary',
-		name: 'ReportBeneficiary',
-		component: ReportBeneficiary
-	},
-	{
-		path: '/report-mobilizer',
-		name: 'ReportMobilizer',
-		component: ReportMobilizer
-	},
-	{
-		path: '/report-vendor',
-		name: 'ReportVendor',
-		component: ReportVendor
-	},
-
-	{
 		collapse: true,
 		path: '/dashboard',
 		name: 'Administration',
@@ -317,30 +274,11 @@ let AppRoutes = [
 		showInSidebar: false,
 		icon: 'lock',
 		child: [
-			// {
-			// 	path: '/settings',
-			// 	name: 'Settings',
-			// 	mini: 'B',
-			// 	icon: 'mdi mdi-adjust',
-			// 	component: Settings
-			// },
-			{
-				path: '/reporting',
-				name: 'Reporting',
-				icon: 'mdi mdi-adjust',
-				component: Reporting
-			},
 			{
 				path: '/users',
 				name: 'Users',
 				icon: 'mdi mdi-adjust',
 				component: ListUsers
-			},
-			{
-				path: '/kobo-toolbox',
-				name: 'KoBoToolbox',
-				icon: 'mdi mdi-adjust',
-				component: ListKobotool
 			},
 			{
 				path: '/aid-connect',
