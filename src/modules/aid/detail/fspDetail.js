@@ -10,7 +10,8 @@ import {
 	Col,
 	Button,
 	Table,
-	CardSubtitle,
+	CustomInput,
+	Input,
 	CardTitle,
 	Label,
 	FormGroup,
@@ -22,10 +23,6 @@ import {
 
 import BreadCrumb from '../../ui_components/breadcrumb';
 import Balance from '../../ui_components/balance';
-import { TOAST, MOBIZ_STATUS } from '../../../constants';
-import { formatErrorMsg } from '../../../utils';
-import {getBalance} from '../../../blockchain/abi';
-import MaskLoader from '../../global/MaskLoader';
 
 export default function DetailsForm(props) {
 
@@ -159,16 +156,38 @@ export default function DetailsForm(props) {
 				<Col md="12">
 					<Card>
 						<CardBody>
-							<CardTitle>Transaction history</CardTitle>
-								<CardSubtitle> transactions found.</CardSubtitle>
+						<CardTitle className="mb-0 p-3">
+						<Row>
+							  <Col md="6">Beneficiary Details</Col>
+							  <Col md="6">
+									<div
+										style={{
+											float: 'right',
+											display: 'flex'
+										}}
+									>
+										<CustomInput
+											type="select"
+											id="exampleCustomSelect"
+											name="customSelect"
+											defaultValue=""
+											style={{ width: 'auto', marginRight: '5px' }}
+										>
+											<option value="phone">Filter By</option>
+											<option value="name">Status</option>
+										</CustomInput>
+									</div>
+							  </Col>
+						</Row>
+					</CardTitle>
 							<Table className="no-wrap v-middle" responsive>
 								<thead>
 									<tr className="border-0">
-										<th className="border-0">From</th>
-										<th className="border-0">To</th>
-										<th className="border-0">Value</th>
-										<th className="border-0">Type</th>
-										<th className="border-0">Blockchain Tx</th>
+										<th className="border-0">Ben. Name</th>
+										<th className="border-0">Account Number</th>
+										<th className="border-0">Amount (Rs)</th>
+										<th className="border-0">Transfer Date</th>
+										<th className="border-0">Status</th>
 									</tr>
 								</thead>
 								<tbody>
