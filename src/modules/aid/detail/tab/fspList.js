@@ -344,9 +344,9 @@ const List = ({ projectId }) => {
 					<tr className="border-0">
 						<th className="border-0">S.N.</th>
 						<th className="border-0">Name</th>
-						<th className="border-0">Address</th>
-						<th className="border-0">Phone number</th>
-						<th className="border-0">Token</th>
+						<th className="border-0">Beneficiary</th>
+						<th className="border-0">Token Balance</th>
+						<th className="border-0">View</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -362,7 +362,11 @@ const List = ({ projectId }) => {
 									</td>
 									<td>{d.address || '-'}</td>
 									<td>{d.phone}</td>
-									<td>{fetchingBeneficiaryTokens ? <MiniSpinner /> : d.tokenBalance ? d.tokenBalance : '0'}</td>
+                                    <td className="blue-grey-text  text-darken-4 font-medium">
+                                        <Link to={`/projects/fspDetail`}>
+                                            <i className="fas fa-eye fa-lg"></i>
+                                        </Link>
+									</td>
 								</tr>
 							);
 						})
