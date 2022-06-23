@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import {
 	Nav,
-	NavItem,
-	NavLink,
+	// NavItem,
+	// NavLink,
 	Navbar,
 	NavbarBrand,
 	Collapse,
@@ -126,31 +126,31 @@ export default () => {
 		logoutUser();
 	};
 
-	const sidebarHandler = () => {
-		let element = document.getElementById('main-wrapper');
-		switch (settings.activeSidebarType) {
-			case 'full':
-			case 'iconbar':
-				element.classList.toggle('mini-sidebar');
-				if (element.classList.contains('mini-sidebar')) {
-					element.setAttribute('data-sidebartype', 'mini-sidebar');
-				} else {
-					element.setAttribute('data-sidebartype', settings.activeSidebarType);
-				}
-				break;
+	// const sidebarHandler = () => {
+	// 	let element = document.getElementById('main-wrapper');
+	// 	switch (settings.activeSidebarType) {
+	// 		case 'full':
+	// 		case 'iconbar':
+	// 			element.classList.toggle('mini-sidebar');
+	// 			if (element.classList.contains('mini-sidebar')) {
+	// 				element.setAttribute('data-sidebartype', 'mini-sidebar');
+	// 			} else {
+	// 				element.setAttribute('data-sidebartype', settings.activeSidebarType);
+	// 			}
+	// 			break;
 
-			case 'overlay':
-			case 'mini-sidebar':
-				element.classList.toggle('full');
-				if (element.classList.contains('full')) {
-					element.setAttribute('data-sidebartype', 'full');
-				} else {
-					element.setAttribute('data-sidebartype', settings.activeSidebarType);
-				}
-				break;
-			default:
-		}
-	};
+	// 		case 'overlay':
+	// 		case 'mini-sidebar':
+	// 			element.classList.toggle('full');
+	// 			if (element.classList.contains('full')) {
+	// 				element.setAttribute('data-sidebartype', 'full');
+	// 			} else {
+	// 				element.setAttribute('data-sidebartype', settings.activeSidebarType);
+	// 			}
+	// 			break;
+	// 		default:
+	// 	}
+	// };
 
 	const redirect = useCallback(
 		async (id, redirectUrl) => {
