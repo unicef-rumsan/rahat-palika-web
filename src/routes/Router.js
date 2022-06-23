@@ -288,6 +288,6 @@ let AppRoutes = [
 			}
 		]
 	},
-	{ path: '/', pathTo: '/dashboard', name: 'Dashboard', redirect: true }
+	{ path: '/', pathTo: '/projects', name: 'Projects', redirect: true }
 ];
 export default AppRoutes;

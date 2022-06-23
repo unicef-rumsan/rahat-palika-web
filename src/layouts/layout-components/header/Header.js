@@ -276,6 +276,14 @@ export default () => {
 										<p className=" mb-0">{currentUser && currentUser.email ? currentUser.email : ''}</p>
 									</div>
 								</div>
+								<DropdownItem
+									onClick={() => {
+										History.push('/projects');
+									}}
+								>
+									<i className="fa fa-exchange mr-1 ml-1" /> Switch Project
+								</DropdownItem>
+								<DropdownItem divider />
 								<DropdownItem onClick={handleProfileLink}>
 									<i className="ti-wallet mr-1 ml-1" /> My Balance
 								</DropdownItem>
