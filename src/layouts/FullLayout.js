@@ -2,26 +2,26 @@ import React, { useState, useEffect, Suspense, useContext } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import Header from './layout-components/header/Header';
-import Sidebar from './layout-components/sidebar/Sidebar';
+// import Sidebar from './layout-components/sidebar/Sidebar';
 import Footer from './layout-components/footer/Footer';
 import AppRoutes from '../routes/Router';
 import Spinner from '../modules/spinner';
 import { AppContext } from '../contexts/AppSettingsContext';
-import { getUser } from '../utils/sessionManager';
-import { ROLES } from '../constants';
+// import { getUser } from '../utils/sessionManager';
+// import { ROLES } from '../constants';
 
 export default props => {
 	const [width, setWidth] = useState(window.innerWidth);
 
 	const { settings, initApp } = useContext(AppContext);
 
-	const { roles } = getUser();
-	const is_admin = roles.includes(ROLES.ADMIN);
+	// const { roles } = getUser();
+	// const is_admin = roles.includes(ROLES.ADMIN);
 
-	const SidebarRoutes = AppRoutes.filter(d => {
-		if (is_admin && d.state === 'admin') d.showInSidebar = true;
-		return d.showInSidebar === true;
-	});
+	// const SidebarRoutes = AppRoutes.filter(d => {
+	// 	if (is_admin && d.state === 'admin') d.showInSidebar = true;
+	// 	return d.showInSidebar === true;
+	// });
 
 	useEffect(() => {
 		(async () => {
