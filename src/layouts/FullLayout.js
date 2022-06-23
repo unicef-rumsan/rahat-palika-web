@@ -85,11 +85,11 @@ export default props => {
 			{/*--------------------------------------------------------------------------------*/}
 			{/* Sidebar                                                                        */}
 			{/*--------------------------------------------------------------------------------*/}
-			<Sidebar {...props} routes={SidebarRoutes} />
+			{/* <Sidebar {...props} routes={SidebarRoutes} /> */}
 			{/*--------------------------------------------------------------------------------*/}
 			{/* Page Main-Content                                                              */}
 			{/*--------------------------------------------------------------------------------*/}
-			<div className="page-wrapper d-block">
+			<div className="d-block">
 				<div className="page-content container-fluid">
 					<Suspense fallback={<Spinner />}>
 						<Switch>
