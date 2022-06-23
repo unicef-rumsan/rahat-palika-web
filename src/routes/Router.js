@@ -56,6 +56,7 @@ const EditVendor = lazy(() => import('../modules/vendor/edit'));
 
 const VendorAdd = lazy(() => import('../views/vendors/add'));
 const VendorDetail = lazy(() => import('../views/vendors/detail'));
+const FspDetail = lazy(() => import('../modules/aid/detail/fspDetail'));
 
 // ------------------------------Notification UI------------------------------------
 const NotificationList = lazy(() =>
@@ -65,6 +66,12 @@ const NotificationList = lazy(() =>
 // --------------------------------------------------------------------------------
 
 let AppRoutes = [
+	{
+		path: '/projects/fspDetail',
+		name: 'FspDetail',
+		component: FspDetail,
+		showInSidebar: false
+	},
 	{
 		path: '/dashboard',
 		name: 'Dashboard',

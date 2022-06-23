@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import BeneficiaryList from './beneficiaryList';
 import VendorList from './vendorList';
 import MobilizersList from './mobilizersList';
+import FspList from './fspList';
 
 const Tabs = ({ projectId }) => {
 	const [activeTab, setActiveTab] = useState('1');
@@ -48,6 +49,16 @@ const Tabs = ({ projectId }) => {
 								Mobilizers
 							</NavLink>
 						</NavItem>
+						<NavItem>
+							<NavLink
+								className={classnames({ active: activeTab === '4' })}
+								onClick={() => {
+									toggle('4');
+								}}
+							>
+								FSPs
+							</NavLink>
+						</NavItem>
 					</Nav>
 					<TabContent className="pt-4" activeTab={activeTab}>
 						<TabPane tabId="1">
@@ -68,6 +79,13 @@ const Tabs = ({ projectId }) => {
 							<Row>
 								<Col sm="12">
 									<MobilizersList projectId={projectId} />
+								</Col>
+							</Row>
+						</TabPane>
+						<TabPane tabId="4">
+							<Row>
+								<Col sm="12">
+									<FspList projectId={projectId}/>
 								</Col>
 							</Row>
 						</TabPane>
