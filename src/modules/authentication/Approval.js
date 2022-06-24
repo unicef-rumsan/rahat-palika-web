@@ -6,8 +6,6 @@ import qs from 'query-string';
 
 export default function SignUp(props) {
 	const search = qs.parse(props.location.search);
-
-	//   const[wallet,setWallet]=useState(search.wallet_address)
 	const wallet = search.wallet_address;
 	return (
 		<>
@@ -44,7 +42,7 @@ export default function SignUp(props) {
 						By signing up you acknowledge the{' '}
 						<a href="https://docs.rahat.io/privacy-policy" className="privacy-policy">
 							Privacy Policy
-						</a>{' '}
+						</a>
 						.
 					</p>
 				</Col>

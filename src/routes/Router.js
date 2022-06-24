@@ -117,13 +117,16 @@ let AppRoutes = [
 		icon: 'users',
 		component: AddBeneficiary
 	},
-
 	{
 		path: '/projects/:id',
 		name: 'Aid',
 		component: AidDetails
 	},
-
+	{
+		path: '/projects/current',
+		name: 'Aid',
+		component: AidDetails
+	},
 	{
 		path: '/projects',
 		name: 'Projects',
@@ -295,6 +298,6 @@ let AppRoutes = [
 			}
 		]
 	},
-	{ path: '/', pathTo: '/projects', name: 'Projects', redirect: true }
+	{ path: '/', pathTo: '/projects/current', name: 'Aid', redirect: true }
 ];
 export default AppRoutes;

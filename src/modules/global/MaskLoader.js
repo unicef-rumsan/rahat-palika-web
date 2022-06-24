@@ -6,7 +6,7 @@ export default function MaskLoader(props) {
 	const { isOpen, message, size } = props;
 	return (
 		<>
-			<Modal isOpen={isOpen} className={props.className || ''} size={size ? size : ''} backdrop="sta" centered>
+			<Modal isOpen={isOpen} className={props.className || ''} size={size ? size : ''} backdrop="static" centered>
 				<ModalBody>
 					<div style={{ padding: 10 }}>
 						{message || 'Please wait...'} <span style={{ fontSize: 12 }}>This may take a while</span>

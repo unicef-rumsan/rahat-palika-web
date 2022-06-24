@@ -18,7 +18,8 @@ export default function AidDetails(props) {
 	const [inputTokens, setInputToken] = useState('');
 	const [projectDetails, setProjectDetails] = useState(null);
 	const [passcodeModal, setPasscodeModal] = useState(false);
-	const projectId = props.aidId;
+
+	let projectId = props.aidId;
 
 	const togglePasscodeModal = useCallback(() => setPasscodeModal(!passcodeModal), [passcodeModal]);
 

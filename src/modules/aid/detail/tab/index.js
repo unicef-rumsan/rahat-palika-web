@@ -85,7 +85,7 @@ const Tabs = ({ projectId }) => {
 						<TabPane tabId="4">
 							<Row>
 								<Col sm="12">
-									<FspList projectId={projectId}/>
+									<FspList projectId={projectId} />
 								</Col>
 							</Row>
 						</TabPane>
