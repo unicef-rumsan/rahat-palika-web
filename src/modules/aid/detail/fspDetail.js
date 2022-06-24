@@ -186,7 +186,7 @@ export default function DetailsForm(props) {
 							<Table className="no-wrap v-middle" responsive>
 								<thead>
 									<tr className="border-0">
-										<th className="border-0">Ben. Name</th>
+										<th className="border-0">Beneficiary Name</th>
 										<th className="border-0">Account Number</th>
 										<th className="border-0">Amount (Rs)</th>
 										<th className="border-0">Transfer Date</th>
@@ -196,7 +196,7 @@ export default function DetailsForm(props) {
 								<tbody>
 							
 										<tr>
-											<td colSpan={4}>No data available.</td>
+											<td colSpan={5}>No data available.</td>
 										</tr>
 								</tbody>
 							</Table>
