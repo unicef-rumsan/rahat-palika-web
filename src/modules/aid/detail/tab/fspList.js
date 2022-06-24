@@ -323,12 +323,11 @@ const List = ({ projectId }) => {
                         style={{marginRight:'8px'}}						
                         />
                         <button
-							onClick={() => toggleAmountModal(ACTION.BULK_ISSUE)}
 							type="button"
 							className="btn waves-effect waves-light btn-outline-info"
 							style={{ borderRadius: '8px', marginRight: '20px' }}
 						>
-							Add FSP
+							<Link to={`/projects/addFsp`}>Add FSP</Link>
 						</button>
 					</div>
 				</div>
