@@ -20,17 +20,17 @@ import {
 	ModalHeader,
 	ModalFooter
 } from 'reactstrap';
-
 import BreadCrumb from '../../ui_components/breadcrumb';
+import  {Link}  from 'react-router-dom';
 import Balance from '../../ui_components/balance';
 
 export default function DetailsForm(props) {
+	let history = useHistory();
 
 	return (
 		<>
 			<p className="page-heading">Financial Service Provider</p>
 			<BreadCrumb redirect_path="mobilizers" root_label="Mobilizers" current_label="Details" />
-
 			<Modal>
 				<ModalHeader>Select Project</ModalHeader>
 				<ModalBody>
@@ -55,9 +55,12 @@ export default function DetailsForm(props) {
 					</React.Fragment>
 				</ModalFooter>
 			</Modal>
-
+			<div className='mb-3 ml-2'>
+				<Button className="btn" onClick={() => history.goBack()}>Go Back</Button >
+			</div>	
 			<Row>
 				<Col md="7">
+
 					<Card>
 						<div className="stat-card-body" style={{ minHeight: 120 }}>
 							<CardTitle className="title" style={{ flexBasis: '70%' }}>
