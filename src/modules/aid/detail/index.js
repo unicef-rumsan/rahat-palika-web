@@ -11,12 +11,18 @@ import PieChart from './pieChart';
 import Tabs from './tab';
 import { TOAST, PROJECT_STATUS } from '../../../constants';
 import BreadCrumb from '../../ui_components/breadcrumb';
+import { getProjectFromLS, getActiveProject } from '../../../utils/checkProject';
+// import { getVendorBalance } from '../../../services/vendor';
 // import Balance from '../../ui_components/balance';
 
 export default function Index(props) {
-	const { id } = props.match.params;
-
 	const { addToast } = useToasts();
+	const [projectDetails, setProjectDetails] = useState(null);
+	const [fetchingBlockchain, setFetchingBlockchain] = useState(false);
+	const [totalFiatBalance, setTotalFiatBalance] = useState(0);
+	const [totalRemainingFiatBalance, setTotalRemainingFiatBalance] = useState(0);
+	const [projectId, setProjectId] = useState('');
+	let { id } = props.match.params;
 	const {
 		total_tokens,
 		available_tokens,
@@ -26,19 +32,11 @@ export default function Index(props) {
 		getAidBalance,
 		getProjectPackageBalance
 	} = useContext(AidContext);
-	const {
-		// loading,
-		appSettings
-	} = useContext(AppContext);
-
-	const [projectDetails, setProjectDetails] = useState(null);
-	const [fetchingBlockchain, setFetchingBlockchain] = useState(false);
-	const [totalFiatBalance, setTotalFiatBalance] = useState(0);
-	const [totalRemainingFiatBalance,setTotalRemainingFiatBalance] = useState(0)
+	const { appSettings } = useContext(AppContext);
 
 	const handleStatusChange = status => {
 		const success_label = status === PROJECT_STATUS.CLOSED ? 'Closed' : 'Activated';
-		changeProjectStatus(id, status)
+		changeProjectStatus(projectId, status)
 			.then(d => {
 				setProjectDetails(d);
 				addToast(`Project has been ${success_label}`, TOAST.SUCCESS);
@@ -49,7 +47,7 @@ export default function Index(props) {
 	};
 
 	const fetchProjectDetails = () => {
-		getAidDetails(id)
+		getAidDetails(projectId)
 			.then(res => {
 				setProjectDetails(res);
 			})
@@ -65,26 +63,43 @@ export default function Index(props) {
 		try {
 			setFetchingBlockchain(true);
 			const { rahat_admin } = agency.contracts;
-			await getProjectCapital(id, rahat_admin);
-			await getAidBalance(id, rahat_admin);
-			const res = await getProjectPackageBalance(id, rahat_admin);
+			await getProjectCapital(projectId, rahat_admin);
+			await getAidBalance(projectId, rahat_admin);
+			const res = await getProjectPackageBalance(projectId, rahat_admin);
 			console.log({ res });
-			setTotalFiatBalance(res.projectCapital.grandTotal || 0);
-			setTotalRemainingFiatBalance(res.remainingBalance.grandTotal || 0)
+			setTotalFiatBalance(res?.projectCapital?.grandTotal || 0);
+			setTotalRemainingFiatBalance(res?.remainingBalance?.grandTotal || 0);
 		} catch (err) {
 			console.log(err);
 			addToast(err.message, TOAST.ERROR);
 		} finally {
 			setFetchingBlockchain(false);
 		}
-	}, [addToast, appSettings, getAidBalance, getProjectCapital, id, getProjectPackageBalance]);
+	}, [addToast, appSettings, getAidBalance, getProjectCapital, projectId, getProjectPackageBalance]);
 
-	useEffect(fetchProjectDetails, []);
+	useEffect(() => {
+		async function assignProjectId() {
+			if (id === 'current') {
+				const currentProject = getProjectFromLS();
+				if (currentProject) {
+					setProjectId(currentProject);
+				} else {
+					const proj = await getActiveProject();
+					console.log({ proj });
+					setProjectId(proj);
+				}
+			} else {
+				setProjectId(id);
+			}
+		}
+		assignProjectId();
+	}, [id]);
+
+	useEffect(fetchProjectDetails, [projectId]);
 
 	useEffect(() => {
 		fetchPackageAndTokenBalance();
-	}, [fetchPackageAndTokenBalance]);
-
+	}, [fetchPackageAndTokenBalance, projectId]);
 	return (
 		<>
 			<p className="page-heading">Projects</p>
@@ -113,9 +128,9 @@ export default function Index(props) {
 							available_tokens={available_tokens}
 							total_tokens={total_tokens}
 							total_package={totalFiatBalance}
-							available_package = {totalRemainingFiatBalance}
+							available_package={totalRemainingFiatBalance}
 							projectStatus={projectDetails.status}
-							projectId={id}
+							projectId={projectId}
 						/>
 					)}
 
@@ -153,7 +168,7 @@ export default function Index(props) {
 					/> */}
 			{/* </Col> */}
 			{/* </Row> */}
-			<Tabs projectId={id} />
+			{projectId && <Tabs projectId={projectId} />}
 		</>
 	);
 }
