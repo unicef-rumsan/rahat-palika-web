@@ -175,7 +175,7 @@ const Wallet = () => {
 						</div>
 					</div>
 					<p className="text-privacy">
-						By signing up you acknowledge the{' '}
+						By signing up you acknowledge the
 						<a href="https://docs.rahat.io/privacy-policy" className="privacy-policy">
 							Privacy Policy
 						</a>{' '}

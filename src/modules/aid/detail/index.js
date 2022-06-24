@@ -11,7 +11,7 @@ import PieChart from './pieChart';
 import Tabs from './tab';
 import { TOAST, PROJECT_STATUS } from '../../../constants';
 import BreadCrumb from '../../ui_components/breadcrumb';
-import { getProjectFromLS, getActiveProject } from '../../../utils/checkProject';
+import { getProjectFromLS, setProjectToLS, getActiveProject } from '../../../utils/checkProject';
 // import { getVendorBalance } from '../../../services/vendor';
 // import Balance from '../../ui_components/balance';
 
@@ -85,11 +85,11 @@ export default function Index(props) {
 					setProjectId(currentProject);
 				} else {
 					const proj = await getActiveProject();
-					console.log({ proj });
 					setProjectId(proj);
 				}
 			} else {
 				setProjectId(id);
+				setProjectToLS(id);
 			}
 		}
 		assignProjectId();
