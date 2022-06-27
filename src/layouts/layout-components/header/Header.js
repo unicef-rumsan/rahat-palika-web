@@ -209,7 +209,7 @@ export default () => {
 					<Nav className="ml-auto float-right" navbar>
 						{/*--------------------------------------------------------------------------------*/}
 
-						<UncontrolledDropdown nav inNavbar>
+						{/* <UncontrolledDropdown nav inNavbar>
 							<DropdownToggle nav caret>
 								<FeatherIcon icon="bell" fill={wsNotification && 'orange'} />
 							</DropdownToggle>
@@ -224,7 +224,7 @@ export default () => {
 									</div>
 								</div>
 								<div className={'message-center notifications'}>
-									{/*<!-- Message -->*/}
+									
 									{notifications?.map((notification, index) => {
 										return (
 											<span
@@ -252,7 +252,7 @@ export default () => {
 									<strong>Check all notifications</strong> <i className="fa fa-angle-right" />
 								</a>
 							</DropdownMenu>
-						</UncontrolledDropdown>
+						</UncontrolledDropdown> */}
 
 						{/*--------------------------------------------------------------------------------*/}
 						{/* Start Profile Dropdown                                                         */}

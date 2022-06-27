@@ -59,7 +59,6 @@ export default function SignUp(props) {
 				<Col className="left-content">
 					<div className="text-center">
 						<a href="/">
-							{' '}
 							<img src={Logo} height="200" width="460" alt="rahat logo"></img>
 						</a>
 						<div style={{ width: '410px' }}>
