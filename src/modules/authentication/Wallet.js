@@ -1,122 +1,35 @@
-import React, { useCallback, useRef, useEffect, useState, useContext } from 'react';
-import { useQRCode } from 'react-qrcodes';
-import EthCrypto from 'eth-crypto';
-import { Card, Row, CardTitle, Col, Button, CardText } from 'reactstrap';
-import { AppContext } from '../../contexts/AppSettingsContext';
+import React, { useState } from 'react';
+import { Card, Row, CardTitle, Col, Button, Form, FormGroup, Input } from 'reactstrap';
 import Logo from '../../assets/images/rahat-logo-blue.png';
-import DataService from '../../services/db';
 import './wallet.css';
 import { useToasts } from 'react-toast-notifications';
 import { TOAST } from '../../constants';
-
-const API_SERVER = process.env.REACT_APP_API_SERVER;
-const WSS_SERVER = API_SERVER.replace('http', 'ws');
-const QR_REFRESH_TIME = 30000; // 30
+import WalletComponent from './WalletComponent';
+import Swal from 'sweetalert2';
 
 const Wallet = () => {
 	const { addToast } = useToasts();
-	const ws = useRef(null);
-	const [qroptions, setQrOptions] = useState({});
-	const [clientId, setclientId] = useState('');
-	const [refreshCounter, setRefreshCounter] = useState(0);
-	const { setTempIdentity, tempIdentity } = useContext(AppContext);
+	const [isWalletLogin, setIsWalletLogin] = useState(false);
 
-	function getRandomString(length) {
-		let randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		let result = '';
-		for (let i = 0; i < length; i++) {
-			result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
-		}
-		return result;
-	}
+	const toggleLogin = e => {
+		e.preventDefault();
+		setIsWalletLogin(!isWalletLogin);
+	};
 
-	const [inputRef] = useQRCode({
-		text: JSON.stringify(qroptions),
-		options: {
-			level: 'M',
-			margin: 7,
-			scale: 1,
-			width: 200
-		}
-	});
-
-	const generateQR = useCallback(
-		(id, token) => {
-			const randomChars = getRandomString(128);
-			const entropy = Buffer.from(randomChars, 'utf-8');
-			const tempIdentity = EthCrypto.createIdentity(entropy);
-			setTempIdentity(tempIdentity);
-			const data = {
-				name: 'Rumsan Office',
-				action: 'login',
-				id: id,
-				token: token,
-				callbackUrl: `${API_SERVER}/api/v1/auth/wallet`,
-				encryptionKey: tempIdentity.publicKey
-			};
-			setQrOptions(data);
-		},
-		[setTempIdentity]
-	);
-
-	useEffect(() => {
-		ws.current = new WebSocket(WSS_SERVER);
-		return () => {
-			ws.current.close();
-		};
-	}, [refreshCounter]);
-
-	useEffect(() => {
-		if (!ws.current) return;
-
-		ws.current.onopen = () => {
-			ws.current.send(JSON.stringify({ action: 'get_token' }));
-		};
-
-		ws.current.onmessage = async e => {
-			const data = JSON.parse(e.data);
-			if (data.action === 'unauthorized') {
-				addToast('User not authorized! please Signup', TOAST.WARNING);
-				window.location.replace(`/sign_up?wallet_address=${data.publicKey}`);
+	const getOtpAndLogin = async email => {
+		const { value: otp } = await Swal.fire({
+			title: 'Enter Code',
+			input: 'number',
+			inputLabel: 'A 6 Digit Code has been sent to your email address',
+			allowOutsideClick: true,
+			inputValidator: value => {
+				if (!value) {
+					return 'Please enter 6 digit code sent to your email';
+				}
+				if (value.length !== 6) return 'Must be 6 digit';
 			}
-			if (data.action === 'account-locked') {
-				addToast('User not activated! ', TOAST.WARNING);
-				window.location.replace(`/approval?wallet_address=${data.publicKey}`);
-			}
-			if (data.data && data.data.token) {
-				const { id, token } = data.data;
-				setclientId(id.toString());
-				// setToken(token.toString());
-				generateQR(id, token);
-			}
-			if (data.action === 'welcome') {
-				let clientId = data.id.toString();
-				setclientId(clientId);
-			}
-			if (data.encryptedWallet) {
-				const encWalletData = EthCrypto.cipher.parse(data.encryptedWallet);
-				const decrypted = await EthCrypto.decryptWithPrivateKey(
-					tempIdentity.privateKey, // privateKey
-					encWalletData // encrypted-data
-				);
-				const address = JSON.parse(decrypted).address;
-				await DataService.saveWallet(decrypted);
-				await DataService.saveAddress(address);
-			}
-
-			if (data.action === 'access-granted') {
-				window.location.replace(`/passport-control?token=${data.accessToken}`);
-			}
-		};
-
-		let timer = setTimeout(() => {
-			setclientId('');
-		}, QR_REFRESH_TIME);
-
-		return () => clearTimeout(timer);
-	}, [generateQR, addToast, tempIdentity.privateKey, refreshCounter]);
-
-	const handleRefreshQrCode = () => setRefreshCounter(refreshCounter + 1);
+		});
+	};
 
 	return (
 		<>
@@ -140,42 +53,51 @@ const Wallet = () => {
 						</Link>
 					</p> */}
 					<div className=" text-center">
-						<p className="text-title">Rahat Agency App</p>
-						<div className="mt-4 align-items-center">
-							<div style={{ padding: 15 }}>
-								<canvas ref={inputRef} style={{ display: clientId ? '' : 'none' }} />
-							</div>
-
-							<Row>
-								<Col xs="12" md="2" lg="2"></Col>
-								<Col xs="12" md="8" lg="8">
-									{clientId ? (
-										''
-									) : (
-										<Card body inverse className="qr-card">
-											<CardTitle className="qr-card-title">QR Code Expired</CardTitle>
-											<CardText>Generated qrcode will expire in {QR_REFRESH_TIME / 1000} seconds.</CardText>
-											<Button type="button" onClick={handleRefreshQrCode} className="qr-card-button">
-												<i className="fas fa-redo" style={{ marginRight: '10px' }}></i> Refresh QR Code
-											</Button>
+						<p className="text-title">Rahat Palika App</p>
+						{!isWalletLogin && (
+							<div className="mt-4">
+								<Row>
+									<Col>
+										<Card style={{ padding: '20px', width: '25rem' }}>
+											<CardTitle className="text-left">
+												<h5>Sign In</h5>
+											</CardTitle>
+											<p className="mt-2" style={{ color: 'red' }}>
+												User does not exists
+											</p>
+											<Form>
+												<FormGroup className="mt-2">
+													<Input type="email" name="email" id="exampleEmail" placeholder="Your Email" />
+												</FormGroup>
+											</Form>
+											<div className="text-center">
+												<Button
+													color="primary"
+													type="button"
+													size="md"
+													onClick={getOtpAndLogin}
+													style={{ width: 'fit-content' }}
+												>
+													Log In
+												</Button>
+											</div>
+											<div className="mt-2">
+												<p className="mt-2">
+													Do you use Rumsan Wallet? &nbsp;
+													<span type="button" onClick={toggleLogin} style={{ color: '#326481' }}>
+														Click Here
+													</span>
+												</p>
+											</div>
 										</Card>
-									)}
-								</Col>
-								<Col xs="12" md="2" lg="2"></Col>
-							</Row>
-
-							<p className="text-instruction">
-								<i className="fa fa-qrcode" aria-hidden="true" style={{ marginRight: '10px' }}></i>
-								Open Rumsan wallet App and scan the QR code to log in
-							</p>
-
-							{/* <a href=""> */}
-							<p className="text-tutorial">Click to learn how this works.</p>
-							{/* </a> */}
-						</div>
+									</Col>
+								</Row>
+							</div>
+						)}
+						{isWalletLogin && <WalletComponent toggleLogin={toggleLogin} />}
 					</div>
 					<p className="text-privacy">
-						By signing up you acknowledge the
+						By signing up you acknowledge the{' '}
 						<a href="https://docs.rahat.io/privacy-policy" className="privacy-policy">
 							Privacy Policy
 						</a>{' '}
