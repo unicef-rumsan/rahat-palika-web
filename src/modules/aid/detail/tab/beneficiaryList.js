@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
-import { Table, FormGroup, InputGroup, Input } from 'reactstrap';
+import { Table, FormGroup, InputGroup, Input,CustomInput } from 'reactstrap';
 import { useToasts } from 'react-toast-notifications';
 import QRCode from 'qrcode';
 import * as XLSX from 'xlsx';
@@ -349,7 +349,79 @@ const List = ({ projectId }) => {
 						/>
 					</div>
 				</div>
+			
+				{/* <Row>
+					<Col md="12">
+						<div
+							style={{
+								float: 'right',
+								display: 'flex',
+								justifyContent:'flex-end'
+							}}
+						>
+							<CustomInput
+								type="select"
+								id="exampleCustomSelect"
+								name="customSelect"
+								defaultValue=""
+								style={{ marginRight: '5px' }}
+							>
+								<option value="phone">Search By Phone</option>
+								<option value="name">By Name</option>
+							</CustomInput>
+							<div style={{ display: 'inline-flex' }}>
+								<Input
+									placeholder=''
+									style={{ width: '100%' }}
+								/>
+							</div>
+							<div>
+								<Button className="btn" color="info">
+									Add New
+								</Button>
+						</div>
+						</div>
+					</Col>
+				</Row> */}
 
+				<div className="flex-item">
+					{/* <button type="button" className="btn waves-effect waves-light btn-info" style={{ borderRadius: '8px' }}>
+						Add Beneficiary
+					</button> */}
+				</div>
+			</div>
+			<div>
+				<div className="row">
+					<div style={{ flex: 1}}>
+					</div>
+					<CustomInput
+						type="select"
+						id="exampleCustomSelect"
+						name="customSelect"
+						defaultValue=""
+						style={{ marginRight: '5px',width:'12%' }}
+					>
+						<option value="phone">Filter By</option>
+						<option value="name">Name</option>
+						<option value="phoneNumber">Phone Number</option>
+						<option value="banked-unbanked">Banked / Unbanked</option>
+						<option value="gender">Gender</option>
+					</CustomInput>
+					<Input
+						placeholder=''
+						style={{ marginRight: '5px',width:'12%' }}
+					/>
+					<div style={{float: 'right' }}>
+						<button
+							type="button"
+							onClick={handleFileUploadClick}
+							className="btn waves-effect waves-light btn-outline-info"
+							style={{ borderRadius: '8px' }}
+						>
+							Add New
+						</button>
+					</div>
+				</div>
 				<div className="flex-item">
 					{/* <button type="button" className="btn waves-effect waves-light btn-info" style={{ borderRadius: '8px' }}>
 						Add Beneficiary
@@ -385,8 +457,9 @@ const List = ({ projectId }) => {
 						})
 					) : (
 						<tr>
-							<td colSpan={2}></td>
+							<td colSpan={3}></td>
 							<td>No data available.</td>
+							<td colSpan={2}></td>
 						</tr>
 					)}
 				</tbody>

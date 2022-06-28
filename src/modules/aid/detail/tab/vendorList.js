@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useCallback, useState } from 'react';
-import { Table } from 'reactstrap';
+import { Table, CustomInput, Input } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 import { AidContext } from '../../../../contexts/AidContext';
@@ -35,15 +35,47 @@ const List = ({ projectId }) => {
 
 	return (
 		<>
+			<div className="row">
+					<div style={{ flex: 1}}>
+					</div>
+					<CustomInput
+						type="select"
+						id="exampleCustomSelect"
+						name="customSelect"
+						defaultValue=""
+						style={{ marginRight: '5px',width:'12%' }}
+					>
+						<option value="phone">Filter By</option>
+						<option value="name">Name</option>
+						<option value="phoneNumber">Phone Number</option>
+						<option value="banked-unbanked">Banked / Unbanked</option>
+						<option value="gender">Gender</option>
+					</CustomInput>
+					<Input
+						placeholder=''
+						style={{ marginRight: '5px',width:'12%' }}
+					/>
+					<div style={{float: 'right' }}>
+						<button
+							type="button"
+							className="btn waves-effect waves-light btn-outline-info"
+							style={{ borderRadius: '8px' }}
+						>
+							Add New
+						</button>
+					</div>
+				</div>
 			<Table className="no-wrap v-middle" responsive>
 				<thead>
 					<tr className="border-0">
 						<th className="border-0">S.N.</th>
 						<th className="border-0">Name</th>
+						<th className="border-0">Status</th>
+						<th className="border-0">Phone</th>
 						<th className="border-0">Address</th>
-						<th className="border-0">Phone number</th>
-						<th className="border-0">Email</th>
-						<th className="border-0">Shop</th>
+						<th className="border-0">Registration Date</th>
+						<th className="border-0">Balance</th>
+						<th className="border-0">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -57,17 +89,20 @@ const List = ({ projectId }) => {
 											{d.name}
 										</Link>
 									</td>
+									<td>{d.status || '-'}</td>
+									<td>{d.phone || '-'}</td>
 									<td>{d.address || '-'}</td>
-									<td>{d.phone}</td>
-									<td>{d.email}</td>
-									<td>{d.shop_name || '-'}</td>
+									<td>{d.registration_date}</td>
+									<td>{d.balance}</td>
+									<td>{d.action || '-'}</td>
 								</tr>
 							);
 						})
 					) : (
 						<tr>
-							<td colSpan={2}></td>
+							<td colSpan={4}></td>
 							<td>No data available.</td>
+							<td colSpan={4}></td>
 						</tr>
 					)}
 				</tbody>

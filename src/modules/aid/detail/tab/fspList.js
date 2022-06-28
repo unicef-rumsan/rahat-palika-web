@@ -371,8 +371,9 @@ const List = ({ projectId }) => {
 						})
 					) : (
 						<tr>
-							<td colSpan={2}></td>
+							<td colSpan={3}></td>
 							<td>No data available.</td>
+							<td colSpan={2}></td>
 						</tr>
 					)}
 				</tbody>
