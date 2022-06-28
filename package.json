@@ -67,7 +67,7 @@
 		"react-to-print": "^2.13.0",
 		"react-toast-notifications": "^2.4.0",
 		"reactstrap": "^8.4.1",
-		"sweetalert2": "^9.17.2",
+		"sweetalert2": "^11.4.4",
 		"xlsx": "^0.17.0"
 	},
 	"eslintConfig": {
