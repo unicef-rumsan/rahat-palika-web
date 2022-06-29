@@ -55,18 +55,9 @@ const List = ({ projectId }) => {
 						<option value="gender">Gender</option>
 					</CustomInput>
 					<Input
-						placeholder=''
+						placeholder='Search Here ...'
 						style={{ marginRight: '5px',width:'12%' }}
 					/>
-					<div style={{float: 'right' }}>
-						<button
-							type="button"
-							className="btn waves-effect waves-light btn-outline-info"
-							style={{ borderRadius: '8px' }}
-						>
-							Add New
-						</button>
-					</div>
 				</div>
 				<div className="flex-item">
 					{/* <button type="button" className="btn waves-effect waves-light btn-info" style={{ borderRadius: '8px' }}>
