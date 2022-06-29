@@ -10,6 +10,7 @@ import SelectWrapper from '../../global/SelectWrapper';
 import UploadPlaceholder from '../../../assets/images/download.png';
 import { blobToBase64 } from '../../../utils';
 import BootstrapSwitchButton from 'bootstrap-switch-button-react';
+import BankDetailForm from './bankDetailForm';
 
 
 const AddBeneficiary = () => {
@@ -44,6 +45,8 @@ const AddBeneficiary = () => {
 	const [profilePic, setProfilePic] = useState('');
 	const [govtId, setGovtId] = useState('');
 
+    const [bankFormView, setbankFormView] = useState(false);
+
 	const handleProfileUpload = async e => {
 		const file = e.target.files[0];
 		const base64Url = await blobToBase64(file);
@@ -62,6 +65,10 @@ const AddBeneficiary = () => {
 	const handleExtraInfoChange = e => {
 		setExtras({ ...extras, [e.target.name]: e.target.value });
 	};
+
+    const handleBankAccForm = (checked) => {
+        setbankFormView(checked);
+    };
 
 	const handleFormSubmit = e => {
 		e.preventDefault();
@@ -338,51 +345,19 @@ const AddBeneficiary = () => {
                                     <Col>
                                     <FormGroup>
                                     <Label className='mr-3'>Do you have bank account ? </Label>
-                                    <BootstrapSwitchButton
-                                        checked       
+                                    <BootstrapSwitchButton 
+                                        checked = {bankFormView}      
 										onlabel="Banked"
 										offlabel="Unbanked"
 										width={120}
 										height={20}
 										onstyle="success"
-										
+										onChange={handleBankAccForm}
 									/>
                                     </FormGroup>
-                                    
                                     </Col>
                                 </Row>
-                                <Row>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label>Swift Code</Label>
-                                            <Input type="text" name="swiftCode" required />
-                                        </FormGroup>
-                                        <FormGroup>
-                                            <Label>Name</Label>
-                                            <Input type="text" required />
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label>Contact Name</Label>
-                                            <Input type="text" required />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label>Contact Email</Label>
-                                            <Input type="text" required />
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label>Contact Phone</Label>
-                                            <Input type="text" required />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
+                                { bankFormView && <BankDetailForm/>}
                                 <CardBody style={{ paddingLeft: 0 }}>
                                     {loading ? (
                                         <GrowSpinner />
