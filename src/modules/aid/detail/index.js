@@ -7,13 +7,10 @@ import { AppContext } from '../../../contexts/AppSettingsContext';
 import DetailsCard from '../../global/DetailsCard';
 import ProjectInfo from './projectInfo';
 import PieChart from './pieChart';
-// import BarChart from './barChart';
 import Tabs from './tab';
 import { TOAST, PROJECT_STATUS } from '../../../constants';
 import BreadCrumb from '../../ui_components/breadcrumb';
 import { getProjectFromLS, setProjectToLS, getActiveProject } from '../../../utils/checkProject';
-// import { getVendorBalance } from '../../../services/vendor';
-// import Balance from '../../ui_components/balance';
 
 export default function Index(props) {
 	const { addToast } = useToasts();

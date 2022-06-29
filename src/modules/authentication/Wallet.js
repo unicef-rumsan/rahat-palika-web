@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { Card, Row, CardTitle, Col, Button, Form, FormGroup, Input } from 'reactstrap';
 import Logo from '../../assets/images/rahat-logo-blue.png';
 import './wallet.css';
-import { useToasts } from 'react-toast-notifications';
-import { TOAST } from '../../constants';
 import WalletComponent from './WalletComponent';
+import { generateOTP, verifyOTP } from '../../services/users';
 import Swal from 'sweetalert2';
 
 const Wallet = () => {
-	const { addToast } = useToasts();
+	const [email, setEmail] = useState('');
 	const [isWalletLogin, setIsWalletLogin] = useState(false);
 
 	const toggleLogin = e => {
@@ -16,19 +15,27 @@ const Wallet = () => {
 		setIsWalletLogin(!isWalletLogin);
 	};
 
-	const getOtpAndLogin = async email => {
-		const { value: otp } = await Swal.fire({
-			title: 'Enter Code',
-			input: 'number',
-			inputLabel: 'A 6 Digit Code has been sent to your email address',
-			allowOutsideClick: true,
-			inputValidator: value => {
-				if (!value) {
-					return 'Please enter 6 digit code sent to your email';
+	const getOtpAndLogin = async e => {
+		e.preventDefault();
+		const result = await generateOTP({ address: email });
+		if (result) {
+			const { value: otp } = await Swal.fire({
+				title: 'Enter OTP Code',
+				input: 'number',
+				inputLabel: 'A 6 Digit Code has been sent to your email address',
+				allowOutsideClick: true,
+				inputValidator: value => {
+					if (!value) {
+						return 'Please enter 6 digit code sent to your email';
+					}
+					if (value.length !== 6) return 'Must be 6 digit';
 				}
-				if (value.length !== 6) return 'Must be 6 digit';
+			});
+			if (otp) {
+				const isOTPValid = await verifyOTP({ otp });
+				console.log('IS OTP VALID:', { isOTPValid });
 			}
-		});
+		}
 	};
 
 	return (
@@ -67,7 +74,12 @@ const Wallet = () => {
 											</p>
 											<Form>
 												<FormGroup className="mt-2">
-													<Input type="email" name="email" id="exampleEmail" placeholder="Your Email" />
+													<Input
+														type="email"
+														name="email"
+														placeholder="Your Email"
+														onChange={e => setEmail(e.target.value)}
+													/>
 												</FormGroup>
 											</Form>
 											<div className="text-center">
