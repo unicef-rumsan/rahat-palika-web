@@ -6,17 +6,19 @@ import { History } from '../../../utils/History';
 import FspSelector from '../../global/FspSelector';
 import GrowSpinner from '../../../modules/global/GrowSpinner';
 import BreadCrumb from '../../ui_components/breadcrumb';
+import { addFsp } from '../../../services/fsp';
+import { getProjectFromLS } from '../../../utils/checkProject';
 
-const AddFsp = () => {
+const AddFsp = params => {
 	const { loading } = useContext(AppContext);
 	const [selectorFsp] = useState('');
 
 	const [formData, setFormData] = useState({
 		name: '',
-		contact_name: '',
-		swift_code: '',
-		contact_email: '',
-		contact_phone: ''
+		bisCode: '',
+		email: '',
+		phone: '',
+		address: ''
 	});
 	const handleInputChange = e => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,6 +26,12 @@ const AddFsp = () => {
 
 	const handleFormSubmit = e => {
 		e.preventDefault();
+		const projectId = getProjectFromLS();
+		console.log({ projectId });
+		const response = addFsp(projectId, formData);
+		if (response) {
+			alert('Fsp Added');
+		}
 	};
 
 	const handleCancelClick = () => History.push('/projects');
@@ -31,10 +39,10 @@ const AddFsp = () => {
 		const { name, bisCode, address, email, phone } = data;
 		const bankValue = {
 			name,
-			swift_code: bisCode,
-			contact_email: email,
+			bisCode: bisCode,
+			email: email,
 			address,
-			contact_phone: phone
+			phone: phone
 		};
 		setFormData(bankValue);
 	};
@@ -56,9 +64,9 @@ const AddFsp = () => {
 											<Input
 												readOnly
 												type="text"
-												name="swift_code"
+												name="bisCode"
 												onChange={handleInputChange}
-												defaultValue={formData.swift_code}
+												defaultValue={formData.bisCode}
 												required
 											/>
 										</FormGroup>
@@ -67,9 +75,9 @@ const AddFsp = () => {
 										<FormGroup>
 											<Label>Contact Email</Label>
 											<Input
-												name="contact_email"
+												name="email"
 												onChange={handleInputChange}
-												defaultValue={formData.contact_email}
+												defaultValue={formData.email}
 												type="text"
 												required
 											/>
@@ -79,9 +87,9 @@ const AddFsp = () => {
 										<FormGroup>
 											<Label>Contact Phone</Label>
 											<Input
-												name="contact_phone"
+												name="phone"
 												onChange={handleInputChange}
-												defaultValue={formData.contact_phone}
+												defaultValue={formData.phone}
 												type="text"
 												required
 											/>
