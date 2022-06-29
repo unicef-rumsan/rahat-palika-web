@@ -414,11 +414,10 @@ const List = ({ projectId }) => {
 					<div style={{float: 'right' }}>
 						<button
 							type="button"
-							onClick={handleFileUploadClick}
 							className="btn waves-effect waves-light btn-outline-info"
 							style={{ borderRadius: '8px' }}
 						>
-							Add New
+							<Link to='/beneficiary/addBeneficiary'>Add New</Link>
 						</button>
 					</div>
 				</div>

@@ -11,6 +11,7 @@ const BeneficiaryDetails = lazy(() => import('../modules/beneficary/detail/index
 const AddBeneficiary = lazy(() => import('../modules/beneficary/add'));
 const EditBeneficiary = lazy(() => import('../modules/beneficary/edit'));
 const issueBudget = lazy(() => import('../modules/beneficary/detail/issue'));
+const AddBeneficiaryDetail = lazy(() => import ('../modules/aid/detail/addBeneficiary'));
 
 // Institutions
 const InstitutionList = lazy(() => import('../modules/institution'));
@@ -67,6 +68,12 @@ const NotificationList = lazy(() =>
 // --------------------------------------------------------------------------------
 
 let AppRoutes = [
+	{
+		path:'/beneficiary/addBeneficiary',
+		name:'AddBeneficiary',
+		component: AddBeneficiaryDetail,
+		showInSidebar: false
+	},
 	{
 		path: '/projects/fspDetail',
 		name: 'FspDetail',

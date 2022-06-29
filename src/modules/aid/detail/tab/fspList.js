@@ -15,7 +15,6 @@ import PasscodeModal from '../../../global/PasscodeModal';
 import UploadList from './uploadList';
 import AdvancePagination from '../../../global/AdvancePagination';
 import MaskLoader from '../../../global/MaskLoader';
-import MiniSpinner from '../../../global/MiniSpinner';
 
 const { PAGE_LIMIT, BULK_BENEFICIARY_LIMIT } = APP_CONSTANTS;
 
