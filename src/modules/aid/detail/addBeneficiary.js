@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { Card, CardBody, Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useToasts } from 'react-toast-notifications';
-
+import GrowSpinner from '../../../modules/global/GrowSpinner';
 import { History } from '../../../utils/History';
 import BreadCrumb from '../../ui_components/breadcrumb';
 import { GROUPS, TOAST } from '../../../constants';
@@ -9,6 +9,8 @@ import { BeneficiaryContext } from '../../../contexts/BeneficiaryContext';
 import SelectWrapper from '../../global/SelectWrapper';
 import UploadPlaceholder from '../../../assets/images/download.png';
 import { blobToBase64 } from '../../../utils';
+import BootstrapSwitchButton from 'bootstrap-switch-button-react';
+
 
 const AddBeneficiary = () => {
 	const { addToast } = useToasts();
@@ -321,33 +323,90 @@ const AddBeneficiary = () => {
 										</FormGroup>
 									</Col>
 								</Row>
-
-								<CardBody style={{ paddingLeft: 0 }}>
-									{loading ? (
-										<Button type="button" disabled={true} className="btn btn-secondary">
-											Adding,Please wait...
-										</Button>
-									) : (
-										<div>
-											<Button type="submit" className="btn btn-info">
-												<i className="fa fa-check"></i> Submit
-											</Button>
-											<Button
-												type="button"
-												onClick={handleCancelClick}
-												style={{ borderRadius: 8 }}
-												className="btn btn-dark ml-2"
-											>
-												Cancel
-											</Button>
-										</div>
-									)}
-								</CardBody>
 							</Form>
 						</CardBody>
 					</Card>
 				</Col>
 			</Row>
+
+            <Row>
+                <Col md="12">
+                    <Card>
+                        <CardBody>
+                            <Form onSubmit={handleFormSubmit} style={{ color: '#6B6C72' }}>
+                                <Row>
+                                    <Col>
+                                    <FormGroup>
+                                    <Label className='mr-3'>Do you have bank account ? </Label>
+                                    <BootstrapSwitchButton
+                                        checked       
+										onlabel="Banked"
+										offlabel="Unbanked"
+										width={120}
+										height={20}
+										onstyle="success"
+										
+									/>
+                                    </FormGroup>
+                                    
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label>Swift Code</Label>
+                                            <Input type="text" name="swiftCode" required />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <Label>Name</Label>
+                                            <Input type="text" required />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label>Contact Name</Label>
+                                            <Input type="text" required />
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label>Contact Email</Label>
+                                            <Input type="text" required />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label>Contact Phone</Label>
+                                            <Input type="text" required />
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                                <CardBody style={{ paddingLeft: 0 }}>
+                                    {loading ? (
+                                        <GrowSpinner />
+                                    ) : (
+                                        <div>
+                                            <Button type="submit" className="btn btn-info">
+                                                <i className="fa fa-check"></i> Submit
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                onClick={handleCancelClick}
+                                                style={{ borderRadius: 8 }}
+                                                className="btn btn-dark ml-2"
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    )}
+                                </CardBody>
+                            </Form>
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
 		</div>
 	);
 };
