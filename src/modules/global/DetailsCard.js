@@ -71,13 +71,7 @@ export default function DetailsCard(props) {
 							<div className="sub-title">{name || 'No Label'}</div> */}
 
 							<div style={{ display: 'flex', alignItems: 'center' }}>
-								<img
-									src={imgUrl ? `${IPFS_GATEWAY}/ipfs/${imgUrl}` : displayPic}
-									alt="user"
-									className="rounded-circle"
-									width="45"
-								/>
-								<div style={{ marginLeft: '20px' }}>
+								<div>
 									<p className="card-font-medium">{name_value || '-'}</p>
 									<div className="sub-title">{name || 'No Label'}</div>
 								</div>
