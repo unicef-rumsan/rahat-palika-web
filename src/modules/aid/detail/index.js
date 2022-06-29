@@ -85,6 +85,7 @@ export default function Index(props) {
 					setProjectId(currentProject);
 				} else {
 					const proj = await getActiveProject();
+					setProjectToLS(proj);
 					setProjectId(proj);
 				}
 			} else {
