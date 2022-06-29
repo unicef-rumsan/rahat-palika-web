@@ -1,7 +1,10 @@
 const SERVER_URL = process.env.REACT_APP_API_SERVER;
 const API_PATH = SERVER_URL + '/api/v1';
+const REGISTRY_API = process.env.REACT_APP_REGISTRY_API;
 
 module.exports = {
+	REGISTRY_API,
+	BANK_LIST: REGISTRY_API + '/api/v1/banks',
 	AGENCY: API_PATH + '/agency',
 	APP: API_PATH + '/app',
 	AID_CONNECT: API_PATH + '/aid-connect',
@@ -17,6 +20,6 @@ module.exports = {
 	FAUCET: process.env.REACT_APP_BLOCKCHAIN_FAUCET,
 	MOBILIZERS: API_PATH + '/mobilizers',
 	NFT: API_PATH + '/nft',
-	Notification:API_PATH+'/notifications',
-	Sms:API_PATH+'/sms'
+	Notification: API_PATH + '/notifications',
+	Sms: API_PATH + '/sms'
 };

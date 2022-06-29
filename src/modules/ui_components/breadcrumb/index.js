@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 export default function index({ root_label, current_label, redirect_path }) {
 	return (
 		<>
-			<Breadcrumb style={{ visibility: 'hidden' }}>
+			<Breadcrumb style={{ visibility: 'visible' }}>
 				<BreadcrumbItem style={{ color: '#6B6C72' }}>
 					<Link to={`/${redirect_path}`}>{root_label || 'Home'}</Link>
 				</BreadcrumbItem>
