@@ -271,7 +271,7 @@ const List = ({ projectId }) => {
 	}, [addToast, beneficiaryByAid, projectId]);
 
 	const fetchProjectFsp = useCallback(async () => {
-		const fsps = await listProjectFsp(projectId);
+		const { data: fsps } = await listProjectFsp(projectId);
 		setProjectFsp(fsps);
 	}, [projectId]);
 

@@ -12,18 +12,21 @@ import { blobToBase64 } from '../../../utils';
 import BootstrapSwitchButton from 'bootstrap-switch-button-react';
 import BankDetailForm from './bankDetailForm';
 
-
 const AddBeneficiary = () => {
 	const { addToast } = useToasts();
 	const { listProject, addBeneficiary } = useContext(BeneficiaryContext);
+	const [bankData, setBankData] = useState(null);
 
 	const [formData, setFormData] = useState({
 		name: '',
 		phone: '',
 		email: '',
 		address: '',
-		address_temporary: '',
-		govt_id: ''
+		projects: '',
+		gender: '',
+		govt_id: '',
+		photo: '',
+		govt_id_image: ''
 	});
 
 	const [extras, setExtras] = useState({
@@ -35,6 +38,10 @@ const AddBeneficiary = () => {
 		child: ''
 	});
 
+	const handleBankData = (name, value) => {
+		setBankData({ ...bankData, [name]: value });
+	};
+
 	const [loading, setLoading] = useState(false);
 	const [projectList, setProjectList] = useState([]);
 
@@ -45,7 +52,7 @@ const AddBeneficiary = () => {
 	const [profilePic, setProfilePic] = useState('');
 	const [govtId, setGovtId] = useState('');
 
-    const [bankFormView, setbankFormView] = useState(false);
+	const [bankFormView, setbankFormView] = useState(false);
 
 	const handleProfileUpload = async e => {
 		const file = e.target.files[0];
@@ -66,9 +73,9 @@ const AddBeneficiary = () => {
 		setExtras({ ...extras, [e.target.name]: e.target.value });
 	};
 
-    const handleBankAccForm = (checked) => {
-        setbankFormView(checked);
-    };
+	const handleBankAccForm = checked => {
+		setbankFormView(checked);
+	};
 
 	const handleFormSubmit = e => {
 		e.preventDefault();
@@ -76,6 +83,7 @@ const AddBeneficiary = () => {
 
 		if (selectedGroup) extras.group = selectedGroup;
 		const payload = { ...formData, extras: { ...extras } };
+		payload.bank = bankData;
 		payload.projects = selectedProjects;
 		if (selectedGender) payload.gender = selectedGender;
 		if (profilePic) payload.photo = profilePic;
@@ -85,7 +93,7 @@ const AddBeneficiary = () => {
 			.then(() => {
 				setLoading(false);
 				addToast('Beneficiary added successfully', TOAST.SUCCESS);
-				History.push('/beneficiaries');
+				History.push('/projects/current');
 			})
 			.catch(err => {
 				setLoading(false);
@@ -102,7 +110,7 @@ const AddBeneficiary = () => {
 		setSelectedProjects(values.toString());
 	};
 
-	const handleCancelClick = () => History.push('/beneficiaries');
+	const handleCancelClick = () => History.push('/projects/current');
 
 	const loadProjects = useCallback(async () => {
 		const projects = await listProject();
@@ -336,52 +344,52 @@ const AddBeneficiary = () => {
 				</Col>
 			</Row>
 
-            <Row>
-                <Col md="12">
-                    <Card>
-                        <CardBody>
-                            <Form onSubmit={handleFormSubmit} style={{ color: '#6B6C72' }}>
-                                <Row>
-                                    <Col>
-                                    <FormGroup>
-                                    <Label className='mr-3'>Do you have bank account ? </Label>
-                                    <BootstrapSwitchButton 
-                                        checked = {bankFormView}      
-										onlabel="Banked"
-										offlabel="Unbanked"
-										width={120}
-										height={20}
-										onstyle="success"
-										onChange={handleBankAccForm}
-									/>
-                                    </FormGroup>
-                                    </Col>
-                                </Row>
-                                { bankFormView && <BankDetailForm/>}
-                                <CardBody style={{ paddingLeft: 0 }}>
-                                    {loading ? (
-                                        <GrowSpinner />
-                                    ) : (
-                                        <div>
-                                            <Button type="submit" className="btn btn-info">
-                                                <i className="fa fa-check"></i> Submit
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                onClick={handleCancelClick}
-                                                style={{ borderRadius: 8 }}
-                                                className="btn btn-dark ml-2"
-                                            >
-                                                Cancel
-                                            </Button>
-                                        </div>
-                                    )}
-                                </CardBody>
-                            </Form>
-                        </CardBody>
-                    </Card>
-                </Col>
-            </Row>
+			<Row>
+				<Col md="12">
+					<Card>
+						<CardBody>
+							<Form onSubmit={handleFormSubmit} style={{ color: '#6B6C72' }}>
+								<Row>
+									<Col>
+										<FormGroup>
+											<Label className="mr-3">Do you have bank account ? </Label>
+											<BootstrapSwitchButton
+												checked={bankFormView}
+												onlabel="Banked"
+												offlabel="Unbanked"
+												width={120}
+												height={20}
+												onstyle="success"
+												onChange={handleBankAccForm}
+											/>
+										</FormGroup>
+									</Col>
+								</Row>
+								{bankFormView && <BankDetailForm bankData={bankData} handleBankData={handleBankData} />}
+								<CardBody style={{ paddingLeft: 0 }}>
+									{loading ? (
+										<GrowSpinner />
+									) : (
+										<div>
+											<Button type="submit" className="btn btn-info" onClick={handleFormSubmit}>
+												<i className="fa fa-check"></i> Submit
+											</Button>
+											<Button
+												type="button"
+												onClick={handleCancelClick}
+												style={{ borderRadius: 8 }}
+												className="btn btn-dark ml-2"
+											>
+												Cancel
+											</Button>
+										</div>
+									)}
+								</CardBody>
+							</Form>
+						</CardBody>
+					</Card>
+				</Col>
+			</Row>
 		</div>
 	);
 };

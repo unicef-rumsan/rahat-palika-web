@@ -23,7 +23,7 @@ export function addFsp(id, payload) {
 			})
 			.then(res => {
 				if (res.statusText === 'OK') {
-					resolve(res.data);
+					resolve(res);
 				}
 				reject(res.data);
 			})
@@ -41,7 +41,7 @@ export function listProjectFsp(id, payload) {
 			})
 			.then(res => {
 				if (res.statusText === 'OK') {
-					resolve(res.data);
+					resolve(res);
 				}
 				reject(res.data);
 			})
@@ -50,3 +50,24 @@ export function listProjectFsp(id, payload) {
 			});
 	});
 }
+
+export function addBeneficiaryFsp(id, payload) {
+	console.log(id, payload);
+	return new Promise((resolve, reject) => {
+		axios
+			.post(`${PROJECTS}/${id}/institutions`, payload, {
+				headers: { access_token: access_token }
+			})
+			.then(res => {
+				if (res.statusText === 'OK') {
+					resolve(res);
+				}
+				reject(res.data);
+			})
+			.catch(err => {
+				reject({ statusText: 'FAIL', data: {} });
+			});
+	});
+}
+
+//TODO Call projects invovlved fsp list : /projects/{projectId}/institutions

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Card, CardBody, Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
-
+import { useToasts } from 'react-toast-notifications';
 import { AppContext } from '../../../contexts/AppSettingsContext';
 import { History } from '../../../utils/History';
 import FspSelector from '../../global/FspSelector';
@@ -12,7 +12,7 @@ import { getProjectFromLS } from '../../../utils/checkProject';
 const AddFsp = params => {
 	const { loading } = useContext(AppContext);
 	const [selectorFsp] = useState('');
-
+	const { addToast } = useToasts();
 	const [formData, setFormData] = useState({
 		name: '',
 		bisCode: '',
@@ -24,18 +24,24 @@ const AddFsp = params => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const handleFormSubmit = e => {
+	const handleFormSubmit = async e => {
 		e.preventDefault();
 		const projectId = getProjectFromLS();
 		console.log({ projectId });
-		const response = addFsp(projectId, formData);
-		if (response) {
-			alert('Fsp Added');
+		try {
+			const response = await addFsp(projectId, formData);
+			if (response.status === 200) {
+				addToast('Fsp Added Successfully', { appearance: 'success', autoDismiss: true });
+				History.push('/current/projects');
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
 	const handleCancelClick = () => History.push('/projects');
 	const matchFsp = data => {
+		console.log({ formData });
 		const { name, bisCode, address, email, phone } = data;
 		const bankValue = {
 			name,
@@ -112,7 +118,7 @@ const AddFsp = params => {
 									<Col lg={6} md={12} style={{ marginTop: '0.1rem' }}>
 										<FormGroup>
 											<Label>Contact Name</Label>
-											<Input name="name" onChange={handleInputChange} type="text" required />
+											<Input name="contact_name" type="text" required />
 										</FormGroup>
 									</Col>
 								</Row>
