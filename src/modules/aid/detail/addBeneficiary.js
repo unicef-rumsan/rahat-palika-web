@@ -83,7 +83,7 @@ const AddBeneficiary = () => {
 
 		if (selectedGroup) extras.group = selectedGroup;
 		const payload = { ...formData, extras: { ...extras } };
-		payload.bank = bankData;
+		payload.bank_account = bankData;
 		payload.projects = selectedProjects;
 		if (selectedGender) payload.gender = selectedGender;
 		if (profilePic) payload.photo = profilePic;
