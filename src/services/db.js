@@ -6,8 +6,7 @@ import { getDefaultNetwork } from '../constants/networks';
 const db = new Dexie(DB.NAME);
 db.version(DB.VERSION).stores({
 	data: 'name,data',
-	documents: 'hash,type,name,file,createdAt',
-	assets: 'address,type,name,symbol,decimal,balance,network'
+	documents: 'hash,type,name,file,createdAt'
 });
 
 export default {
@@ -71,11 +70,11 @@ export default {
 	saveAddress(address) {
 		localStorage.setItem('address', address);
 		return this.save('address', address);
-  },
-  
-  savePrivateKey(privateKey) {
-    return this.save('privateKey', privateKey);
-  },
+	},
+
+	savePrivateKey(privateKey) {
+		return this.save('privateKey', privateKey);
+	},
 
 	getAddress() {
 		return this.get('address');
