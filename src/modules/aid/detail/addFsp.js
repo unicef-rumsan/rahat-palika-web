@@ -1,40 +1,54 @@
 import React, { useState, useContext } from 'react';
 import { Card, CardBody, Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
-
+import { useToasts } from 'react-toast-notifications';
 import { AppContext } from '../../../contexts/AppSettingsContext';
 import { History } from '../../../utils/History';
 import FspSelector from '../../global/FspSelector';
 import GrowSpinner from '../../../modules/global/GrowSpinner';
 import BreadCrumb from '../../ui_components/breadcrumb';
+import { addFsp } from '../../../services/fsp';
+import { getProjectFromLS } from '../../../utils/checkProject';
 
-const AddFsp = () => {
+const AddFsp = params => {
 	const { loading } = useContext(AppContext);
 	const [selectorFsp] = useState('');
-
+	const { addToast } = useToasts();
 	const [formData, setFormData] = useState({
 		name: '',
-		contact_name: '',
-		swift_code: '',
-		contact_email: '',
-		contact_phone: ''
+		bisCode: '',
+		email: '',
+		phone: '',
+		address: ''
 	});
 	const handleInputChange = e => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const handleFormSubmit = e => {
+	const handleFormSubmit = async e => {
 		e.preventDefault();
+		const projectId = getProjectFromLS();
+		console.log({ projectId });
+		try {
+			const response = await addFsp(projectId, formData);
+			if (response.status === 200) {
+				addToast('Fsp Added Successfully', { appearance: 'success', autoDismiss: true });
+				History.push('/current/projects');
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const handleCancelClick = () => History.push('/projects');
 	const matchFsp = data => {
+		console.log({ formData });
 		const { name, bisCode, address, email, phone } = data;
 		const bankValue = {
 			name,
-			swift_code: bisCode,
-			contact_email: email,
+			bisCode: bisCode,
+			email: email,
 			address,
-			contact_phone: phone
+			phone: phone
 		};
 		setFormData(bankValue);
 	};
@@ -56,9 +70,9 @@ const AddFsp = () => {
 											<Input
 												readOnly
 												type="text"
-												name="swift_code"
+												name="bisCode"
 												onChange={handleInputChange}
-												defaultValue={formData.swift_code}
+												defaultValue={formData.bisCode}
 												required
 											/>
 										</FormGroup>
@@ -67,9 +81,9 @@ const AddFsp = () => {
 										<FormGroup>
 											<Label>Contact Email</Label>
 											<Input
-												name="contact_email"
+												name="email"
 												onChange={handleInputChange}
-												defaultValue={formData.contact_email}
+												defaultValue={formData.email}
 												type="text"
 												required
 											/>
@@ -79,9 +93,9 @@ const AddFsp = () => {
 										<FormGroup>
 											<Label>Contact Phone</Label>
 											<Input
-												name="contact_phone"
+												name="phone"
 												onChange={handleInputChange}
-												defaultValue={formData.contact_phone}
+												defaultValue={formData.phone}
 												type="text"
 												required
 											/>
@@ -104,7 +118,7 @@ const AddFsp = () => {
 									<Col lg={6} md={12} style={{ marginTop: '0.1rem' }}>
 										<FormGroup>
 											<Label>Contact Name</Label>
-											<Input name="name" onChange={handleInputChange} type="text" required />
+											<Input name="contact_name" type="text" required />
 										</FormGroup>
 									</Col>
 								</Row>

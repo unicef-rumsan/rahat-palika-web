@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { listFsp } from '../../services/fsp';
-export default function ({ fsp, onChange, prevFsp, label, disabled }) {
+import { listFsp, listProjectFsp } from '../../services/fsp';
+import { getProjectFromLS } from '../../utils/checkProject';
+const projectId = getProjectFromLS();
+export default function ({ fsp, onChange, prevFsp, label, disabled, projectFsp = false }) {
 	const [fspList, setFspList] = useState([]);
 	const [selectedValue, setSelectedValue] = useState({ label: '', value: '' });
 	const updateFsp = e => {
@@ -11,7 +13,7 @@ export default function ({ fsp, onChange, prevFsp, label, disabled }) {
 	useEffect(() => {
 		if (!prevFsp) {
 			async function fetchData() {
-				const res = await listFsp();
+				const res = projectFsp ? await listProjectFsp(projectId) : await listFsp();
 				const { data } = res;
 				const options = data.map(d => ({ label: d.name, value: d }));
 				setFspList(options);
@@ -24,7 +26,7 @@ export default function ({ fsp, onChange, prevFsp, label, disabled }) {
 			fetchData();
 		}
 		return;
-	}, [prevFsp, fsp]);
+	}, [prevFsp, fsp, projectFsp]);
 	return (
 		<div className="form-item">
 			{label === false ? null : (

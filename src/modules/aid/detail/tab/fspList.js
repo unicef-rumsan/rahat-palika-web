@@ -15,6 +15,7 @@ import PasscodeModal from '../../../global/PasscodeModal';
 import UploadList from './uploadList';
 import AdvancePagination from '../../../global/AdvancePagination';
 import MaskLoader from '../../../global/MaskLoader';
+import { listProjectFsp } from '../../../../services/fsp';
 
 const { PAGE_LIMIT, BULK_BENEFICIARY_LIMIT } = APP_CONSTANTS;
 
@@ -46,6 +47,7 @@ const List = ({ projectId }) => {
 	const [currentAction, setCurrentAction] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const [fetchingBeneficiaryTokens, setfetchingBeneficiaryTokens] = useState(true);
+	const [projectFsp, setProjectFsp] = useState([]);
 
 	const hiddenFileInput = React.useRef(null);
 
@@ -61,25 +63,27 @@ const List = ({ projectId }) => {
 		hiddenFileInput.current.click();
 	};
 
-		const appendBeneficiaryBalances = useCallback(({beneficiaries,balances}) => {
-		const beneficiariesWithTokens = beneficiaries.map((ben,i) => {
-			ben.tokenBalance = balances[i]
+	const appendBeneficiaryBalances = useCallback(({ beneficiaries, balances }) => {
+		const beneficiariesWithTokens = beneficiaries.map((ben, i) => {
+			ben.tokenBalance = balances[i];
 			return ben;
-		})
+		});
 		setBenList(beneficiariesWithTokens);
 		setfetchingBeneficiaryTokens(false);
+	}, []);
 
-	},[])
-
-	const fetchBeneficiariesBalances = useCallback(async({beneficiaries}) => {
-		console.log({beneficiaries})
-		if(!appSettings || !appSettings.agency || !appSettings.agency.contracts) return;
-		const { agency } = appSettings
-		setfetchingBeneficiaryTokens(true);
-		const balances = await getBeneficiariesBalances(beneficiaries,agency.contracts.rahat);
-		console.log({balances})
-		if(balances.length) await appendBeneficiaryBalances({beneficiaries,balances})
-	},[appSettings,getBeneficiariesBalances,appendBeneficiaryBalances])
+	const fetchBeneficiariesBalances = useCallback(
+		async ({ beneficiaries }) => {
+			console.log({ beneficiaries });
+			if (!appSettings || !appSettings.agency || !appSettings.agency.contracts) return;
+			const { agency } = appSettings;
+			setfetchingBeneficiaryTokens(true);
+			const balances = await getBeneficiariesBalances(beneficiaries, agency.contracts.rahat);
+			console.log({ balances });
+			if (balances.length) await appendBeneficiaryBalances({ beneficiaries, balances });
+		},
+		[appSettings, getBeneficiariesBalances, appendBeneficiaryBalances]
+	);
 
 	const handleUploadListSubmit = async e => {
 		e.preventDefault();
@@ -162,10 +166,10 @@ const List = ({ projectId }) => {
 			const query = { start, limit: PAGE_LIMIT };
 			const data = await beneficiaryByAid(projectId, query);
 			setBenList(data.data);
-			console.log(data.data)
-			fetchBeneficiariesBalances({beneficiaries:data.data})
+			console.log(data.data);
+			fetchBeneficiariesBalances({ beneficiaries: data.data });
 		},
-		[beneficiaryByAid, projectId,fetchBeneficiariesBalances]
+		[beneficiaryByAid, projectId, fetchBeneficiariesBalances]
 	);
 
 	const convertQrToImg = async data => {
@@ -266,9 +270,18 @@ const List = ({ projectId }) => {
 		}
 	}, [addToast, beneficiaryByAid, projectId]);
 
+	const fetchProjectFsp = useCallback(async () => {
+		const { data: fsps } = await listProjectFsp(projectId);
+		setProjectFsp(fsps);
+	}, [projectId]);
+
 	useEffect(() => {
 		fetchTotalRecords();
 	}, [fetchTotalRecords]);
+
+	useEffect(() => {
+		fetchProjectFsp();
+	}, [fetchProjectFsp]);
 
 	useEffect(() => {
 		submitBulkTokenIssue();
@@ -312,16 +325,10 @@ const List = ({ projectId }) => {
 
 			<div>
 				<div className="row">
-					<div style={{ flex: 1, padding: 10 }}>
-					</div>
+					<div style={{ flex: 1, padding: 10 }}></div>
 					<div style={{ padding: 10, float: 'right' }}>
-                    <input
-						type="text"
-                        placeholder='Search ...'
-                        className='custom-input-box-2'
-                        style={{marginRight:'8px'}}						
-                        />
-                        <button
+						<input type="text" placeholder="Search ..." className="custom-input-box-2" style={{ marginRight: '8px' }} />
+						<button
 							type="button"
 							className="btn waves-effect waves-light btn-outline-info"
 							style={{ borderRadius: '8px', marginRight: '20px' }}
@@ -342,14 +349,15 @@ const List = ({ projectId }) => {
 					<tr className="border-0">
 						<th className="border-0">S.N.</th>
 						<th className="border-0">Name</th>
-						<th className="border-0">Beneficiary</th>
-						<th className="border-0">Token Balance</th>
+						<th className="border-0">Swift Code</th>
+						<th className="border-0">Address</th>
+						<th className="border-0">Phone</th>
 						<th className="border-0">View</th>
 					</tr>
 				</thead>
 				<tbody>
-					{benList.length > 0 ? (
-						benList.map((d, i) => {
+					{projectFsp.length > 0 ? (
+						projectFsp.map((d, i) => {
 							return (
 								<tr key={d._id}>
 									<td>{(currentPage - 1) * PAGE_LIMIT + i + 1}</td>
@@ -358,12 +366,13 @@ const List = ({ projectId }) => {
 											{d.name}
 										</Link>
 									</td>
+									<td>{d.bisCode || '-'}</td>
 									<td>{d.address || '-'}</td>
 									<td>{d.phone}</td>
-                                    <td className="blue-grey-text  text-darken-4 font-medium">
-                                        <Link to={`/projects/fspDetail`}>
-                                            <i className="fas fa-eye fa-lg"></i>
-                                        </Link>
+									<td className="blue-grey-text  text-darken-4 font-medium">
+										<Link to={`/projects/fspDetail`}>
+											<i className="fas fa-eye fa-lg"></i>
+										</Link>
 									</td>
 								</tr>
 							);
