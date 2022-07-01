@@ -8,6 +8,7 @@ import DataService from '../../services/db';
 import './wallet.css';
 import { useToasts } from 'react-toast-notifications';
 import { TOAST } from '../../constants';
+import { getRandomString ,getRandomEntropy} from '../../utils';
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 const WSS_SERVER = API_SERVER.replace('http', 'ws');
@@ -21,20 +22,11 @@ const WalletComponent = ({ toggleLogin }) => {
 	const [refreshCounter, setRefreshCounter] = useState(0);
 	const { setTempIdentity, tempIdentity } = useContext(AppContext);
 
-	function getRandomString(length) {
-		let randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		let result = '';
-		for (let i = 0; i < length; i++) {
-			result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
-		}
-		return result;
-	}
-
 	const generateQR = useCallback(
 		(id, token) => {
-			const randomChars = getRandomString(128);
-			const entropy = Buffer.from(randomChars, 'utf-8');
+			const entropy = getRandomEntropy()
 			const tempIdentity = EthCrypto.createIdentity(entropy);
+			console.log({tempIdentity})
 			setTempIdentity(tempIdentity);
 			const data = {
 				name: 'Rumsan Office',

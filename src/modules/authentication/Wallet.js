@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Row, CardTitle, Col, Button, Form, FormGroup, Input } from 'reactstrap';
 import Logo from '../../assets/images/rahat-logo-blue.png';
 import './wallet.css';
 import WalletComponent from './WalletComponent';
 import { generateOTP, verifyOTP } from '../../services/users';
+import { createRandomIdentity } from '../../utils';
+import EthCrypto from 'eth-crypto';
+import WalletService from '../../utils/blockchain/wallet';
+import DataService from '../../services/db';
+
 import Swal from 'sweetalert2';
 
 const Wallet = () => {
 	const [email, setEmail] = useState('');
 	const [isWalletLogin, setIsWalletLogin] = useState(false);
+	const [tempIdentity,setTempIdentity] = useState(null);
 
 	const toggleLogin = e => {
 		e.preventDefault();
@@ -17,7 +23,13 @@ const Wallet = () => {
 
 	const getOtpAndLogin = async e => {
 		e.preventDefault();
-		const result = await generateOTP({ address: email });
+		console.log({tempIdentity})
+		const result = await generateOTP({ address: email ,encryptionKey: tempIdentity.publicKey});
+		const encryptedData = EthCrypto.cipher.parse(result.encrytedPrivateKey);
+		const decryptedKey = await EthCrypto.decryptWithPrivateKey(tempIdentity.privateKey, encryptedData);
+		DataService.savePrivateKey(decryptedKey)
+		const wallet = await WalletService.loadFromPrivateKey(decryptedKey);
+		console.log(wallet)
 		if (result) {
 			const { value: otp } = await Swal.fire({
 				title: 'Enter OTP Code',
@@ -37,6 +49,11 @@ const Wallet = () => {
 			}
 		}
 	};
+
+	useEffect(() => {
+		const identity = createRandomIdentity()
+		setTempIdentity(identity);
+	},[])
 
 	return (
 		<>
