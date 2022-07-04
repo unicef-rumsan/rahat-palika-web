@@ -4,7 +4,6 @@ import { useToasts } from 'react-toast-notifications';
 import { useHistory } from 'react-router-dom';
 
 import VendorInfo from './vendorInfo';
-import ProjectInvovled from '../../ui_components/projects';
 import TransactionHistory from './transactions';
 import { VendorContext } from '../../../contexts/VendorContext';
 import { AppContext } from '../../../contexts/AppSettingsContext';
@@ -13,13 +12,10 @@ import BreadCrumb from '../../ui_components/breadcrumb';
 import PasscodeModal from '../../global/PasscodeModal';
 import { TOAST } from '../../../constants';
 import { History } from '../../../utils/History';
-import { formatErrorMsg } from '../../../utils';
 import Balance from '../../ui_components/balance';
-import { VENDOR_STATUS, STATUS_ACTIONS } from '../../../constants';
 import ModalWrapper from '../../global/CustomModal';
 import SelectWrapper from '../../global/SelectWrapper';
-import StatusBox from './statusBox';
-import {getBalance} from '../../../blockchain/abi';
+import { getBalance } from '../../../blockchain/abi';
 
 const IPFS_GATEWAY = process.env.REACT_APP_IPFS_GATEWAY;
 
@@ -36,8 +32,7 @@ const Index = ({ params }) => {
 		getVendorPackageBalance,
 		getTokenIdsByProjects,
 		listProjects,
-		addVendorToProject,
-		changeVendorStatus
+		addVendorToProject
 	} = useContext(VendorContext);
 	const { isVerified, wallet, appSettings } = useContext(AppContext);
 
@@ -58,9 +53,8 @@ const Index = ({ params }) => {
 
 	// WIP
 	const [vendorApproveModal, setVendorApproveModal] = useState(false);
-	const [inputStatus, setInputStatus] = useState('');
+	const [inputStatus] = useState('');
 	const [vendorEtherBalance, setVendorEtherBalance] = useState(null);
-
 
 	const toggleVendorApproveModal = () => setVendorApproveModal(!vendorApproveModal);
 	// END WIP
@@ -71,17 +65,6 @@ const Index = ({ params }) => {
 	};
 
 	const togglePasscodeModal = () => setPasscodeModal(!passcodeModal);
-
-	const handleSwitchChange = flag => {
-		const _status = flag === true ? VENDOR_STATUS.ACTIVE : VENDOR_STATUS.SUSPENDED;
-		setInputStatus(_status);
-		togglePasscodeModal();
-	};
-
-	const handleAddBtnClick = e => {
-		e.preventDefault();
-		toggleAddProjectModal();
-	};
 
 	const handleAddprojectSubmit = async e => {
 		e.preventDefault();
@@ -129,30 +112,6 @@ const Index = ({ params }) => {
 		}
 	}, [addToast, addVendorToProject, approveVendor, basicInfo, id, inputStatus, selectedProject]);
 
-	const openApprovalModal = () => {
-		setInputStatus(VENDOR_STATUS.ACTIVE);
-		toggleVendorApproveModal();
-	};
-
-	const rejectVendor = async status => {
-		try {
-			setLoading(true);
-			await changeVendorStatus(id, status);
-			setLoading(false);
-			addToast('Vendor status updated successfully', TOAST.SUCCESS);
-			History.push('/vendors');
-		} catch (err) {
-			setLoading(false);
-			const errMessage = formatErrorMsg(err);
-			addToast(errMessage, TOAST.ERROR);
-		}
-	};
-
-	const handleApproveRejectClick = actionName => {
-		if (actionName === STATUS_ACTIONS.APPROVE) return openApprovalModal(STATUS_ACTIONS.APPROVE);
-		if (actionName === STATUS_ACTIONS.REJECT) return rejectVendor(VENDOR_STATUS.SUSPENDED);
-	};
-
 	const fetchVendorBalance = useCallback(
 		async wallet_address => {
 			setFetchingBalance(true);
@@ -177,8 +136,8 @@ const Index = ({ params }) => {
 
 	const fetchVendorPackageBalance = useCallback(
 		async (wallet_address, tokenIds) => {
-			if(!appSettings) return;
-			const {agency} = appSettings;
+			if (!appSettings) return;
+			const { agency } = appSettings;
 			const { rahat_erc1155 } = agency.contracts;
 			const wallet_addresses = Array(tokenIds.length).fill(wallet_address);
 			const package_balance = await getVendorPackageBalance(rahat_erc1155, wallet_addresses, tokenIds);
@@ -239,18 +198,6 @@ const Index = ({ params }) => {
 		}
 	}, [getVendorTransactions, id]);
 
-	// const fetchVendorPackageTransactions = useCallback(async () => {
-	// 	try {
-	// 		setFetchingBlockChain(true);
-	// 		const transactions = await getVendorTransactions(id);
-	// 		if (transactions) setTransactionList(transactions);
-	// 		setFetchingBlockChain(false);
-	// 	} catch (err) {
-	// 		setFetchingBlockChain(false);
-	// 	}
-	// }, [getVendorTransactions, id]);
-
-
 	useEffect(() => {
 		fetchVendorDetails();
 	}, [fetchVendorDetails]);
@@ -283,7 +230,7 @@ const Index = ({ params }) => {
 						maxMenuHeight={150}
 						data={allProjects}
 						placeholder="--Select Project--"
-					/>{' '}
+					/>
 				</FormGroup>
 			</ModalWrapper>
 			{/* End Add to project modal */}
@@ -302,7 +249,7 @@ const Index = ({ params }) => {
 						maxMenuHeight={150}
 						data={allProjects}
 						placeholder="--Select Project--"
-					/>{' '}
+					/>
 				</FormGroup>
 			</ModalWrapper>
 			{/* End Add to project modal */}
@@ -332,40 +279,15 @@ const Index = ({ params }) => {
 											height="45"
 										/>
 										<div style={{ marginLeft: '20px' }}>
-											<p className="card-font-medium">{basicInfo.name}</p>
+											<p className="card-font-medium">{basicInfo?.name}</p>
 											<div className="sub-title">Name</div>
 										</div>
 									</div>
 								</Col>
 								<Col md="4" sm="4">
 									{vendorStatus && (
-										<StatusBox
-											vendorStatus={vendorStatus}
-											handleApproveRejectClick={handleApproveRejectClick}
-											handleSwitchChange={handleSwitchChange}
-											loading={loading}
-										/>
+										<div className={`btn btn-${vendorStatus === 'active' ? 'success' : 'danger'}`}>{vendorStatus}</div>
 									)}
-									{/* {loading ? (
-										<button
-											type="button"
-											disabled={true}
-											className="btn btn-secondary"
-											style={{ borderRadius: '8px', float: 'right' }}
-										>
-											Changing status, please wait...
-										</button>
-									) : (
-										<BootstrapSwitchButton
-											checked={vendorStatus === VENDOR_STATUS.ACTIVE ? true : false}
-											onlabel="Suspend"
-											offlabel="Activate"
-											width={140}
-											height={30}
-											onstyle="success"
-											onChange={handleSwitchChange}
-										/>
-									)} */}
 								</Col>
 							</Row>
 						</div>
@@ -385,7 +307,6 @@ const Index = ({ params }) => {
 			</Row>
 
 			<VendorInfo information={basicInfo} etherBalance={vendorEtherBalance} />
-			<ProjectInvovled projects={projectList} handleAddBtnClick={handleAddBtnClick} showAddBtn={true} />
 			<TransactionHistory fetching={fetchingTokenTransaction} transactions={transactionList} vendorId={id} />
 		</>
 	);

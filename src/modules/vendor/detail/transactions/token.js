@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardTitle, Table, Row, Col } from 'reactstrap';
+import { Card, Table } from 'reactstrap';
 import GrowSpinner from '../../../global/GrowSpinner';
 
 const EXPLORER_URL = process.env.REACT_APP_BLOCKCHAIN_EXPLORER;
@@ -11,12 +11,6 @@ const TransactionHistory = props => {
 		<div className="main">
 			<Card>
 				<div className="stat-card-body" style={{ minHeight: 120 }}>
-					<CardTitle className="title">
-						<Row>
-							<Col md="6">Token Transaction History</Col>
-							<Col md="6"></Col>
-						</Row>
-					</CardTitle>
 					{fetching ? (
 						<GrowSpinner />
 					) : (
@@ -31,7 +25,7 @@ const TransactionHistory = props => {
 							</thead>
 							<tbody>
 								{transactions.length > 0 ? (
-									transactions.map((tx,i) => {
+									transactions.map((tx, i) => {
 										return (
 											<tr key={i}>
 												<td>{tx.from}</td>

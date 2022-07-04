@@ -2,14 +2,12 @@ import React from 'react';
 import { Card, CardTitle, Col, Row } from 'reactstrap';
 import '../../../assets/css/project.css';
 import image from '../../../assets/images/id-icon-1.png';
-import { History } from '../../../utils/History';
 import moment from 'moment';
 const IPFS_GATEWAY = process.env.REACT_APP_IPFS_GATEWAY;
 
 export default function VendorInfo(props) {
-	const { information ,etherBalance} = props;
+	const { information, etherBalance } = props;
 	const { id } = props.information;
-	const handleEditClick = () => History.push(`/edit-vendor/${id}`);
 
 	return (
 		<div>
@@ -19,16 +17,6 @@ export default function VendorInfo(props) {
 						<CardTitle className="title" style={{ flexBasis: '90%' }}>
 							More Information
 						</CardTitle>
-						<div style={{ flexBasis: '10%' }}>
-							<button
-								type="button"
-								className="btn waves-effect waves-light btn-info"
-								onClick={handleEditClick}
-								style={{ borderRadius: '8px' }}
-							>
-								Edit
-							</button>
-						</div>
 					</div>
 					<Row>
 						<Col md="4" sm="12">
@@ -42,7 +30,7 @@ export default function VendorInfo(props) {
 								<div className="sub-title">Email</div>
 							</div>
 							<div className="card-data">
-								<p className="card-font-medium">{`${information.wallet_address  || '-'} (${etherBalance}) `}</p>
+								<p className="card-font-medium">{`${information.wallet_address || '-'} (${etherBalance}) `}</p>
 								<div className="sub-title">Wallet address</div>
 							</div>
 
