@@ -32,7 +32,7 @@ const Token = ({ benfId, projectId }) => {
 		sendTokenIssuedSms
 	} = useContext(AidContext);
 
-	const { wallet, isVerified, appSettings, currentBalanceTab } = useContext(AppContext);
+	const { palikaWallet:wallet, isVerified, appSettings, currentBalanceTab } = useContext(AppContext);
 	const [inputTokens, setInputToken] = useState('');
 	const [masking, setMasking] = useState(false);
 
@@ -54,7 +54,7 @@ const Token = ({ benfId, projectId }) => {
 		e.preventDefault();
 		setWalletActions(WALLET_ACTIONS.ISSUE_TOKEN);
 		if (inputTokens > available_tokens) return addToast(`Only ${available_tokens} tokens are available`, TOAST.ERROR);
-		togglePasscodeModal();
+		submitTokenRequest();
 	};
 
 	// const handleTokenSuspend  = () => {
@@ -101,7 +101,7 @@ const Token = ({ benfId, projectId }) => {
 	]);
 
 	const submitTokenRequest = useCallback(async () => {
-		if (isVerified && wallet && currentBalanceTab === BALANCE_TABS.TOKEN) {
+		if ( wallet && currentBalanceTab === BALANCE_TABS.TOKEN) {
 			try {
 				setPasscodeModal(false);
 				setMasking(true);
@@ -127,7 +127,6 @@ const Token = ({ benfId, projectId }) => {
 			}
 		}
 	}, [
-		isVerified,
 		wallet,
 		currentBalanceTab,
 		getBeneficiaryById,
@@ -154,10 +153,10 @@ const Token = ({ benfId, projectId }) => {
 	}, [fetchProjectBalance]);
 
 	// TODO: Effect called on package issue. Temporarily fixed!
-	useEffect(() => {
-		if (walletActions === WALLET_ACTIONS.ISSUE_TOKEN) submitTokenRequest();
-		if (walletActions === WALLET_ACTIONS.SUSPEND_TOKEN) submitTokenSuspend();
-	}, [isVerified, submitTokenRequest, walletActions, submitTokenSuspend]);
+	// useEffect(() => {
+	// 	if (walletActions === WALLET_ACTIONS.ISSUE_TOKEN) submitTokenRequest();
+	// 	if (walletActions === WALLET_ACTIONS.SUSPEND_TOKEN) submitTokenSuspend();
+	// }, [isVerified, submitTokenRequest, walletActions, submitTokenSuspend]);
 
 	return (
 		<>

@@ -27,7 +27,6 @@ const AddFsp = params => {
 	const handleFormSubmit = async e => {
 		e.preventDefault();
 		const projectId = getProjectFromLS();
-		console.log({ projectId });
 		try {
 			const response = await addFsp(projectId, formData);
 			if (response.status === 200) {
@@ -41,7 +40,6 @@ const AddFsp = params => {
 
 	const handleCancelClick = () => History.push('/projects');
 	const matchFsp = data => {
-		console.log({ formData });
 		const { name, bisCode, address, email, phone } = data;
 		const bankValue = {
 			name,

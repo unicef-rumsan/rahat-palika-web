@@ -6,8 +6,8 @@ const BankDetailForm = ({ bankData, handleBankData }) => {
 	const [selectorFsp] = useState('');
 	const [swiftCode, setSwiftCode] = useState(null);
 	const matchFsp = data => {
-		const { bisCode, name } = data;
-		handleBankData('institution', name);
+		const { bisCode, id } = data;
+		handleBankData('institution', id);
 		setSwiftCode(bisCode);
 	};
 

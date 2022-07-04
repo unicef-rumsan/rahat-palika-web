@@ -74,12 +74,10 @@ const List = ({ projectId }) => {
 
 	const fetchBeneficiariesBalances = useCallback(
 		async ({ beneficiaries }) => {
-			console.log({ beneficiaries });
 			if (!appSettings || !appSettings.agency || !appSettings.agency.contracts) return;
 			const { agency } = appSettings;
 			setfetchingBeneficiaryTokens(true);
 			const balances = await getBeneficiariesBalances(beneficiaries, agency.contracts.rahat);
-			console.log({ balances });
 			if (balances.length) await appendBeneficiaryBalances({ beneficiaries, balances });
 		},
 		[appSettings, getBeneficiariesBalances, appendBeneficiaryBalances]
