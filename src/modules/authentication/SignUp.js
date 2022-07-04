@@ -32,7 +32,6 @@ export default function SignUp(props) {
 	const handleFormSubmit = async e => {
 		e.preventDefault();
 		try {
-			console.log(appSettings);
 			setLoading(true);
 			const payload = { ...formData, agency: appSettings.agency.id };
 			const user = await signUp(payload);

@@ -87,7 +87,6 @@ const BenefDetails = ({ params }) => {
 		setAssignTokenAmount('');
 		let newWindow = window.open('', 'Print QR', 'fullscreen=yes'),
 			document = newWindow.document.open();
-		console.log({ newWindow });
 		document.write(html);
 		document.close();
 		setTimeout(function () {
@@ -127,8 +126,8 @@ const BenefDetails = ({ params }) => {
 
 	const fetchCurrentBalance = useCallback(
 		async phone => {
-			const {agency} = appSettings
-			if(!agency || !agency.contracts) return;
+			const { agency } = appSettings;
+			if (!agency || !agency.contracts) return;
 			try {
 				const parsed_phone = parseInt(phone);
 				const { agency } = appSettings;

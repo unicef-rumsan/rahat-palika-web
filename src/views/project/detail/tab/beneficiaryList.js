@@ -33,18 +33,22 @@ const List = () => {
 				<div style={{ flex: 1, padding: 10 }}>
 					<button
 						type="button"
-						class="btn waves-effect waves-light btn-outline-info"
+						className="btn waves-effect waves-light btn-outline-info"
 						style={{ borderRadius: '8px', marginRight: '20px' }}
 					>
 						Bulk Token Issue
 					</button>
-					<button type="button" class="btn waves-effect waves-light btn-outline-info" style={{ borderRadius: '8px' }}>
+					<button
+						type="button"
+						className="btn waves-effect waves-light btn-outline-info"
+						style={{ borderRadius: '8px' }}
+					>
 						Bulk Generate QR Code
 					</button>
 				</div>
 
 				<div className="flex-item">
-					<button type="button" class="btn waves-effect waves-light btn-info" style={{ borderRadius: '8px' }}>
+					<button type="button" className="btn waves-effect waves-light btn-info" style={{ borderRadius: '8px' }}>
 						Add Beneficiary
 					</button>
 				</div>

@@ -24,6 +24,51 @@ export default {
 		return db.data.delete(name);
 	},
 
+	async getProjectBalance(name, project) {
+		const existingBal = await this.get(name);
+		if (
+			existingBal?.length > 0 &&
+			existingBal.some(element => {
+				if (element.project === project) {
+					return true;
+				}
+				return false;
+			})
+		) {
+			return existingBal.find(obj => obj.project === project);
+		}
+		return null;
+	},
+
+	async updateProjectBalance(name, data) {
+		const existingBal = await this.get(name);
+		if (
+			existingBal?.length > 0 &&
+			existingBal.some(element => {
+				if (element.project === data[0].project) {
+					return true;
+				}
+				return false;
+			})
+		) {
+			const newBal = existingBal.map(obj => data?.find(o => o.project === obj.project) || obj);
+			await db.data.delete(name);
+			await this.save(name, newBal);
+			return newBal;
+		}
+		return existingBal;
+	},
+
+	async setProjectBalance(name, data) {
+		const existingBalance = await this.get(name);
+		if (existingBalance?.length > 0) {
+			const combinedArray = [...existingBalance, ...data];
+			await this.save(name, combinedArray);
+		} else {
+			await this.save(name, data);
+		}
+	},
+
 	list() {
 		return db.data.toArray();
 	},
@@ -107,38 +152,5 @@ export default {
 
 	listDocuments() {
 		return db.documents.toArray();
-	},
-
-	getAsset(address) {
-		return db.assets.get(address);
-	},
-
-	async getAssetBySymbol(symbol, network) {
-		if (!network) return db.assets.get({ symbol });
-		if (symbol.toUpperCase() === 'ETH') return db.assets.get({ symbol });
-		return db.assets.filter(a => a.symbol === symbol && a.network && a.network.name === network).first();
-	},
-
-	async addDefaultAsset(symbol, name) {
-		let asset = await this.getAsset('default');
-		if (!asset) return db.assets.add({ address: 'default', symbol, name, decimal: 18, balance: 0 });
-	},
-
-	async addMultiAssets(assets) {
-		if (!Array.isArray(assets)) assets = [assets];
-		return db.assets.bulkAdd(assets);
-	},
-
-	saveAsset(asset) {
-		return db.assets.put(asset);
-	},
-
-	async updateAsset(key, asset) {
-		return db.assets.update(key, asset);
-	},
-
-	listAssets(network) {
-		if (!network) return db.assets.toArray();
-		return db.assets.filter(a => a.network === undefined || a.network.name === network).toArray();
 	}
 };

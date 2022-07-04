@@ -44,25 +44,13 @@ export const AppContextProvider = ({ children }) => {
 		const privateKey = await DataService.get('privateKey');
 		if (privateKey) data.palikaWallet = await WalletService.loadFromPrivateKey(privateKey);
 		if (!data.hasWallet) localStorage.removeItem('address');
-		console.log({data})
 		dispatch({ type: ACTION.INIT_APP, data });
 	}, [dispatch]);
 
-	// const getAppSettings=useCallback(()=> {
-	// 	return new Promise((resolve, reject) => {
-	// 		Service.getSettings()
-	// 			.then(res => {
-	// 				dispatch({ type: ACTION.GET_APP_SUCCESS, res });
-	// 				resolve(res);
-	// 			})
-	// 			.catch(err => reject(err));
-	// 	});
-	// },[])
-
-	const getAppSettings=useCallback(async ()=> {
+	const getAppSettings = useCallback(async () => {
 		const res = await Service.getSettings();
-		dispatch({ type: ACTION.GET_APP_SUCCESS, res })
-	},[dispatch])
+		dispatch({ type: ACTION.GET_APP_SUCCESS, res });
+	}, [dispatch]);
 
 	function setPasscodeModal(flag) {
 		dispatch({ type: ACTION.SET_PASSCODE_MODAL, data: flag });
@@ -96,38 +84,6 @@ export const AppContextProvider = ({ children }) => {
 		dispatch({ type: ACTION.CHANGE_ISVERIFIED, data: boolArg });
 	}, []);
 
-	const setWalletPasscode = useCallback(passcode => {
-		dispatch({ type: ACTION.SET_APP_PASSCODE, data: passcode });
-	}, []);
-
-	function setKobotoolbox(payload) {
-		Service.setKobotoolbox(payload);
-	}
-
-	function getKobotoolboxForms(query) {
-		return new Promise((resolve, reject) => {
-			Service.getKobotoolboxForms(query)
-				.then(res => {
-					resolve(res);
-				})
-				.catch(err => {
-					reject(err);
-				});
-		});
-	}
-
-	function getKoboFormsData(assetId) {
-		return new Promise((resolve, reject) => {
-			Service.getKoboFormsData(assetId)
-				.then(res => {
-					resolve(res);
-				})
-				.catch(err => {
-					reject(err);
-				});
-		});
-	}
-
 	return (
 		<AppContext.Provider
 			value={{
@@ -152,10 +108,6 @@ export const AppContextProvider = ({ children }) => {
 				setTempIdentity,
 				setHasWallet,
 				setWallet,
-				setWalletPasscode,
-				setKobotoolbox,
-				getKobotoolboxForms,
-				getKoboFormsData,
 				changeIsverified,
 				initApp
 			}}

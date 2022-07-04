@@ -47,7 +47,6 @@ const Edit = ({ mobilizerId }) => {
 
 	const handleFormSubmit = e => {
 		e.preventDefault();
-		console.log('form data', formData);
 		const payload = { ...formData };
 		if (profileUpload) payload.photo = profileUpload;
 		if (govtIdentity) payload.govt_id_image = govtIdentity;

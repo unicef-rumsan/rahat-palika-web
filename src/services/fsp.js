@@ -15,7 +15,6 @@ export function listFsp(params) {
 }
 
 export function addFsp(id, payload) {
-	console.log(id, payload);
 	return new Promise((resolve, reject) => {
 		axios
 			.post(`${PROJECTS}/${id}/institutions/new`, payload, {
@@ -52,7 +51,6 @@ export function listProjectFsp(id, payload) {
 }
 
 export function addBeneficiaryFsp(id, payload) {
-	console.log(id, payload);
 	return new Promise((resolve, reject) => {
 		axios
 			.post(`${PROJECTS}/${id}/institutions`, payload, {

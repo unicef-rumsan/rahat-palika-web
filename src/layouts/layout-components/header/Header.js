@@ -61,7 +61,6 @@ export default () => {
 
 	const handleNewNotification = useCallback(() => {
 		if (!wsNotification) return;
-		console.log({ wsNotification });
 		if (!notifications || !notifications.length) {
 			const configNotification = getIcons(wsNotification);
 			setNotifications([configNotification]);

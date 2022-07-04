@@ -60,7 +60,6 @@ const Edit = ({ beneficiaryId }) => {
 	};
 
 	const handleInputChange = e => {
-		console.log('event', e.target.name, e.target.value);
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
@@ -302,7 +301,12 @@ const Edit = ({ beneficiaryId }) => {
 									<Col md="6" sm="12">
 										<FormGroup>
 											<Label>Education</Label>
-											<Input type="text" value={extras.education || ''} name="education" onChange={handleExtraInfoChange} />
+											<Input
+												type="text"
+												value={extras.education || ''}
+												name="education"
+												onChange={handleExtraInfoChange}
+											/>
 										</FormGroup>
 									</Col>
 									<Col md="6" sm="12">
@@ -329,7 +333,7 @@ const Edit = ({ beneficiaryId }) => {
 											<br />
 											<Input
 												name="govt_id"
-												value={formData.govt_id ||''}
+												value={formData.govt_id || ''}
 												type="number"
 												className="form-field"
 												onChange={handleInputChange}

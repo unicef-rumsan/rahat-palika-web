@@ -1,34 +1,12 @@
 import React from 'react';
 import { Card, CardTitle, Col, Row } from 'reactstrap';
-import BootstrapSwitchButton from 'bootstrap-switch-button-react';
 
 import '../../assets/css/project.css';
 import { PROJECT_STATUS } from '../../constants';
-import Loading from '../global/Loading';
-import displayPic from '../../assets/images/users/user_avatar.svg';
 import { formatBalanceAndCurrency } from '../../utils';
 
-const IPFS_GATEWAY = process.env.REACT_APP_IPFS_GATEWAY;
-
 export default function DetailsCard(props) {
-	const {
-		fetching,
-		title,
-		button_name,
-		name,
-		imgUrl,
-		name_value,
-		total,
-		total_value,
-		status,
-		handleStatusChange,
-		handleButtonClick
-	} = props;
-
-	const handleSwitchChange = e => {
-		const _status = e === true ? PROJECT_STATUS.ACTIVE : PROJECT_STATUS.CLOSED;
-		handleStatusChange(_status);
-	};
+	const { title, button_name, name, name_value, total, total_value, handleButtonClick } = props;
 
 	return (
 		<div>
@@ -43,15 +21,13 @@ export default function DetailsCard(props) {
 						<Col>
 							<div style={{ float: 'right' }}>
 								{title === 'Project Details' ? (
-									<BootstrapSwitchButton
-										checked={status === PROJECT_STATUS.CLOSED ? false : true}
-										onlabel="Activated"
-										offlabel="Closed"
-										width={140}
-										height={30}
-										onstyle="success"
-										onChange={handleSwitchChange}
-									/>
+									<button
+										type="none"
+										className={`btn btn-${PROJECT_STATUS.CLOSED ? 'danger' : 'success'}`}
+										style={{ borderRadius: '8px', cursor: 'default' }}
+									>
+										{PROJECT_STATUS.CLOSED ? 'Closed' : 'Active'}
+									</button>
 								) : (
 									<button
 										onClick={handleButtonClick}
@@ -67,9 +43,6 @@ export default function DetailsCard(props) {
 					</Row>
 					<Row>
 						<Col md="8" sm="12" style={{ marginBottom: '10px' }}>
-							{/* <p className="card-font-medium">{name_value || '0'}</p>
-							<div className="sub-title">{name || 'No Label'}</div> */}
-
 							<div style={{ display: 'flex', alignItems: 'center' }}>
 								<div>
 									<p className="card-font-medium">{name_value || '-'}</p>
@@ -78,12 +51,7 @@ export default function DetailsCard(props) {
 							</div>
 						</Col>
 						<Col md="4" sm="12">
-							{fetching ? (
-								<Loading />
-							) : (
-								<p className="card-font-bold">{formatBalanceAndCurrency(total_value) || '0'}</p>
-							)}
-
+							<p className="card-font-bold">{formatBalanceAndCurrency(total_value) || '0'}</p>
 							<div className="sub-title">{total || 'No Label'}</div>
 						</Col>
 					</Row>

@@ -1,45 +1,24 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { Card, CardBody, CardTitle, Col, Label, Row } from 'reactstrap';
 import { Pie } from 'react-chartjs-2';
 import Loading from '../../global/Loading';
-import { getUser } from '../../../utils/sessionManager';
-import { ROLES, PROJECT_STATUS, TOAST } from '../.../../../../constants';
-import { useToasts } from 'react-toast-notifications';
 
-export default function Chart({ available_tokens, total_tokens, total_package, available_package, fetching, projectStatus, projectId }) {
-	const history = useHistory();
-	const { addToast } = useToasts();
+export default function Chart({ available_tokens, total_tokens, fetching }) {
+	const [pieData, setPieData] = useState({ labels: [], datasets: [] });
+	useEffect(() => {
+		if (available_tokens && total_tokens)
+			setPieData({
+				labels: ['Available', 'Issued', 'Used'],
+				datasets: [
+					{
+						data: [available_tokens, total_tokens, total_tokens - available_tokens],
+						backgroundColor: ['#2b7ec1', '#fd7e14', '#cece'],
+						hoverBackgroundColor: ['#2b7ec1', '#fd7e14', '#cece']
+					}
+				]
+			});
+	}, [available_tokens, total_tokens]);
 
-	const pieDataToken = {
-		labels: ['Available', 'Issued', 'Used', 'Redeemed',],
-		datasets: [
-			{
-				data: [available_tokens, total_tokens - available_tokens, 0, 0],
-				backgroundColor: ['#2b7ec1', '#fd7e14'],
-				hoverBackgroundColor: ['#2b7ec1', '#fd7e14']
-			}
-		]
-	};
-
-	const pieDataPackage = {
-		labels: ['Available','Issued'],
-		datasets: [
-			{
-				data: [available_package,total_package - available_package],
-				backgroundColor: ['#2b7ec1', '#fd7e14'],
-				hoverBackgroundColor: ['#2b7ec1', '#fd7e14']
-			}
-		]
-	};
-
-	const handleClick = () => {
-		const currentUser = getUser();
-		const isManager = currentUser && currentUser.roles.includes(ROLES.MANAGER);
-		if (isManager || projectStatus === PROJECT_STATUS.SUSPENDED)
-			return addToast('Access denied for this operation!', TOAST.ERROR);
-		history.push(`/add-budget/${projectId}`);
-	};
 	return (
 		<div>
 			<Card>
@@ -53,23 +32,19 @@ export default function Chart({ available_tokens, total_tokens, total_package, a
 								type="button"
 								className="btn waves-effect waves-light btn-outline-info"
 								style={{ borderRadius: '8px', float: 'right' }}
-								onClick={handleClick}
 							>
-								Add Budget
+								Activate
 							</button>
 						</Col>
 					</Row>
 					{fetching ? (
 						<Loading />
 					) : (
-						<div>
-							<div
-								className="chart-wrapper"
-								style={{ width: '100%', marginBottom: '50px', marginTop: '10px', height: 160 }}
-							>
-								<Label style={{ marginBottom: '10px' }}>Tokens</Label>
+						<div className="chart-wrapper mb-5 mt-1 w-100" style={{ height: 350 }}>
+							<Label className="mb-10">Tokens</Label>
+							{pieData?.datasets.length > 0 && (
 								<Pie
-									data={pieDataToken}
+									data={pieData}
 									options={{
 										maintainAspectRatio: false,
 										legend: {
@@ -82,27 +57,7 @@ export default function Chart({ available_tokens, total_tokens, total_package, a
 										}
 									}}
 								/>
-							</div>
-							<div
-								className="chart-wrapper"
-								style={{ width: '100%', marginBottom: '40px', marginTop: '40px', height: 160 }}
-							>
-								<Label style={{ marginBottom: '10px' }}>Packages</Label>
-								<Pie
-									data={pieDataPackage}
-									options={{
-										maintainAspectRatio: false,
-										legend: {
-											display: true,
-											position: 'bottom',
-											labels: {
-												fontFamily: 'Be Vietnam',
-												fontColor: '#9B9B9B'
-											}
-										}
-									}}
-								/>
-							</div>
+							)}
 						</div>
 					)}
 				</CardBody>

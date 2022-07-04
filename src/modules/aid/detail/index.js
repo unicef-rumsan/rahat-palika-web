@@ -9,15 +9,12 @@ import ProjectInfo from './projectInfo';
 import PieChart from './pieChart';
 import Tabs from './tab';
 import { TOAST, PROJECT_STATUS } from '../../../constants';
-import BreadCrumb from '../../ui_components/breadcrumb';
 import { getProjectFromLS, setProjectToLS, getActiveProject } from '../../../utils/checkProject';
+import DataService from '../../../services/db';
 
 export default function Index(props) {
 	const { addToast } = useToasts();
 	const [projectDetails, setProjectDetails] = useState(null);
-	const [fetchingBlockchain, setFetchingBlockchain] = useState(false);
-	const [totalFiatBalance, setTotalFiatBalance] = useState(0);
-	const [totalRemainingFiatBalance, setTotalRemainingFiatBalance] = useState(0);
 	const [projectId, setProjectId] = useState('');
 	let { id } = props.match.params;
 	const {
@@ -26,8 +23,9 @@ export default function Index(props) {
 		getAidDetails,
 		changeProjectStatus,
 		getProjectCapital,
+		setProjectCapital,
 		getAidBalance,
-		getProjectPackageBalance
+		setAidBalance
 	} = useContext(AidContext);
 	const { appSettings } = useContext(AppContext);
 
@@ -53,27 +51,6 @@ export default function Index(props) {
 			});
 	};
 
-	const fetchPackageAndTokenBalance = useCallback(async () => {
-		if (!appSettings) return;
-		const { agency } = appSettings;
-		if (!agency || !agency.contracts) return;
-		try {
-			setFetchingBlockchain(true);
-			const { rahat_admin } = agency.contracts;
-			console.log({projectId})
-			await getProjectCapital(projectId, rahat_admin);
-			await getAidBalance(projectId, rahat_admin);
-			const res = await getProjectPackageBalance(projectId, rahat_admin);
-			setTotalFiatBalance(res?.projectCapital?.grandTotal || 0);
-			setTotalRemainingFiatBalance(res?.remainingBalance?.grandTotal || 0);
-		} catch (err) {
-			console.log(err);
-			addToast(err.message, TOAST.ERROR);
-		} finally {
-			setFetchingBlockchain(false);
-		}
-	}, [addToast, appSettings, getAidBalance, getProjectCapital, projectId, getProjectPackageBalance]);
-
 	useEffect(() => {
 		async function assignProjectId() {
 			if (id === 'current') {
@@ -96,17 +73,50 @@ export default function Index(props) {
 	useEffect(fetchProjectDetails, [projectId]);
 
 	useEffect(() => {
+		async function fetchPackageAndTokenBalance() {
+			if (!appSettings) return;
+			const { agency } = appSettings;
+			if (!agency || !agency.contracts) return;
+			try {
+				if (projectId) {
+					// get balance from indexDB
+					const existingBalance = await DataService.getProjectBalance('balance', projectId);
+					if (existingBalance) {
+						setProjectCapital(existingBalance.total);
+						setAidBalance(existingBalance.balance);
+					} else {
+						// set balance to indexDB from API
+						const { rahat_admin } = agency.contracts;
+						const total = await getProjectCapital(projectId, rahat_admin);
+						const balance = await getAidBalance(projectId, rahat_admin);
+						if (balance && total) {
+							await DataService.setProjectBalance('balance', [{ project: projectId, balance, total }]);
+						}
+					}
+				}
+			} catch (err) {
+				console.log({ err });
+				addToast(err.message, TOAST.ERROR);
+			} finally {
+				// Check if API has updated data and set in indexDB
+				const { rahat_admin } = agency.contracts;
+				const total = await getProjectCapital(projectId, rahat_admin);
+				const balance = await getAidBalance(projectId, rahat_admin);
+				if (balance && total) {
+					await DataService.updateProjectBalance('balance', [{ project: projectId, balance, total }]);
+				}
+			}
+		}
 		fetchPackageAndTokenBalance();
-	}, [fetchPackageAndTokenBalance, projectId]);
+	}, [addToast, appSettings, getAidBalance, getProjectCapital, projectId, setAidBalance, setProjectCapital]);
+
 	return (
 		<>
-			<p className="page-heading">Projects</p>
-			<BreadCrumb redirect_path="projects" root_label="Projects" current_label="Details" />
+			<div style={{ height: '100px' }}></div>
 			<Row>
 				<Col md="7">
 					{projectDetails && (
 						<DetailsCard
-							fetching={fetchingBlockchain}
 							title="Project Details"
 							button_name="Generate QR Code"
 							name="Project Name"
@@ -122,50 +132,14 @@ export default function Index(props) {
 				<Col md="5">
 					{projectDetails && (
 						<PieChart
-							fetching={fetchingBlockchain}
 							available_tokens={available_tokens}
 							total_tokens={total_tokens}
-							total_package={totalFiatBalance}
-							available_package={totalRemainingFiatBalance}
 							projectStatus={projectDetails.status}
 							projectId={projectId}
 						/>
 					)}
-
-					{/* {projectDetails && (
-						<Balance
-							action=""
-							title="Balance"
-							button_name="Add Budget"
-							token_data={available_tokens}
-							package_data={totalFiatBalance}
-							fetching={fetchingBlockchain}
-							loading={loading}
-							projectStatus={projectDetails.status}
-							projectId={id}
-						/>
-					)} */}
 				</Col>
 			</Row>
-
-			{/* <Row> */}
-			{/* <Col md="7">{projectDetails && <ProjectInfo projectDetails={projectDetails} />}</Col> */}
-			{/* <Col md="5"> */}
-			{/* <PieChart
-						fetching={fetchingBlockchain}
-						available_tokens={available_tokens}
-						total_tokens={total_tokens}
-						total_package={totalFiatBalance}
-					/> */}
-
-			{/* <BarChart
-						fetching={fetchingBlockchain}
-						available_tokens={available_tokens}
-						total_tokens={total_tokens}
-						total_package={totalFiatBalance}
-					/> */}
-			{/* </Col> */}
-			{/* </Row> */}
 			{projectId && <Tabs projectId={projectId} />}
 		</>
 	);

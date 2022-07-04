@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import moment from 'moment';
 import { Card, CardTitle, Col, Row, FormGroup, Input, Label } from 'reactstrap';
 
-import { History } from '../../../utils/History';
 import '../../../assets/css/project.css';
 import QRGenerator from './qrGenerator';
 import ReactToPrint from 'react-to-print';
@@ -10,19 +9,15 @@ import ModalWrapper from '../../global/CustomModal';
 import { MAX_QR_GEN } from '../../../constants';
 
 export default function ProjectInfo({ projectDetails }) {
-	const { _id, project_manager, location, description, created_at, serial_index } = projectDetails;
-
-	const handleEditClick = () => History.push(`/edit-project/${_id}`);
+	const { project_manager, location, description, created_at, serial_index } = projectDetails;
 
 	const [qrGenModal, setQrGenModal] = useState(false);
 	const [qrGenData, setQrGenData] = useState({ min: 0, max: 0, projectVersion: 0, amount: null });
-	// const [qrGenLoading, setQrGenLoading] = useState(false);
 
 	const toggleQrGen = () => {
 		setQrGenModal(!qrGenModal);
 		setQrGenData({ min: 0, max: 0, projectVersion: serial_index, amount: null });
 	};
-	// const toggleQrGenLoading = () => setQrGenLoading(!qrGenLoading);
 
 	const qrComponentRef = useRef();
 	const printRef = useRef();
@@ -31,11 +26,7 @@ export default function ProjectInfo({ projectDetails }) {
 		printRef.current.handleClick();
 	};
 
-	// useReactToPrint({
-	// 	content: () => qrComponentRef.current
-	// });
 	const handleQrGenData = e => {
-		console.log(e.target.name);
 		if (e.target.name === 'max' && e.target.value > MAX_QR_GEN) return;
 
 		setQrGenData({ ...qrGenData, [e.target.name]: e.target.value || null });
@@ -52,7 +43,6 @@ export default function ProjectInfo({ projectDetails }) {
 				open={qrGenModal}
 				title="Pre-Generate Qr-Code"
 				handleSubmit={handleQrGenSubmit}
-				// loading={qrGenLoading}
 			>
 				<FormGroup>
 					<Label>Number of Qr-code</Label>
@@ -79,7 +69,7 @@ export default function ProjectInfo({ projectDetails }) {
 				</FormGroup>
 			</ModalWrapper>
 			<Card>
-				<div className="stat-card-body" style={{ minHeight: 330 }}>
+				<div className="stat-card-body" style={{ minHeight: 310 }}>
 					<Row className="mb-3">
 						<Col>
 							<CardTitle className="title" style={{ flexBasis: '90%' }}>
@@ -92,17 +82,9 @@ export default function ProjectInfo({ projectDetails }) {
 									onClick={toggleQrGen}
 									type="button"
 									className="btn waves-effect waves-light btn-outline-info"
-									style={{ borderRadius: '8px', marginRight: '20px' }}
-								>
-									Pre-Generate Qr code
-								</button>
-								<button
-									type="button"
-									onClick={handleEditClick}
-									className="btn waves-effect waves-light btn-info"
 									style={{ borderRadius: '8px' }}
 								>
-									Edit
+									Pre-Generate Qr code
 								</button>
 							</div>
 						</Col>

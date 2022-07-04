@@ -8,7 +8,7 @@ import DataService from '../../services/db';
 import './wallet.css';
 import { useToasts } from 'react-toast-notifications';
 import { TOAST } from '../../constants';
-import { getRandomString ,getRandomEntropy} from '../../utils';
+import { getRandomString, getRandomEntropy } from '../../utils';
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 const WSS_SERVER = API_SERVER.replace('http', 'ws');
@@ -24,9 +24,8 @@ const WalletComponent = ({ toggleLogin }) => {
 
 	const generateQR = useCallback(
 		(id, token) => {
-			const entropy = getRandomEntropy()
+			const entropy = getRandomEntropy();
 			const tempIdentity = EthCrypto.createIdentity(entropy);
-			console.log({tempIdentity})
 			setTempIdentity(tempIdentity);
 			const data = {
 				name: 'Rumsan Office',

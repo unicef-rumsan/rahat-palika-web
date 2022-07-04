@@ -72,6 +72,11 @@ export const AidContextProvider = ({ children }) => {
 		return res;
 	}, []);
 
+	const setProjectCapital = useCallback(_total_tokens => {
+		dispatch({ type: ACTION.SET_TOTAL_TOKENS, res: _total_tokens });
+		return _total_tokens;
+	}, []);
+
 	const getAidBalance = useCallback(async (aidId, rahat_contract) => {
 		let _available = await Service.loadAidBalance(aidId, rahat_contract);
 		dispatch({
@@ -79,6 +84,13 @@ export const AidContextProvider = ({ children }) => {
 			res: _available
 		});
 		return _available;
+	}, []);
+
+	const setAidBalance = useCallback(_available => {
+		dispatch({
+			type: ACTION.SET_AVAILABLE_TOKENS,
+			res: _available
+		});
 	}, []);
 
 	function setLoading() {
@@ -153,14 +165,6 @@ export const AidContextProvider = ({ children }) => {
 		[changeIsverified]
 	);
 
-	const listNftPackages = useCallback((projectId, query) => {
-		return Service.listNftPackages(projectId, query);
-	}, []);
-
-	const getPackageDetails = useCallback(packageId => {
-		return Service.getPackageDetails(packageId);
-	}, []);
-
 	const mintNft = useCallback(
 		({ payload, contracts, wallet }) => {
 			changeIsverified(false);
@@ -179,9 +183,6 @@ export const AidContextProvider = ({ children }) => {
 	);
 	const sendTokenIssuedSms = useCallback(async (phone, token) => {
 		return SmsService.sendTokenIssuedSms({ phone, token });
-	}, []);
-	const sendPackageIssuedSms = useCallback(async (phone, packageName) => {
-		return SmsService.sendPackageIssuedSms({ phone, packageName });
 	}, []);
 
 	const suspendBeneficiaryToken = useCallback(
@@ -207,10 +208,6 @@ export const AidContextProvider = ({ children }) => {
 
 	const getProjectTokenBalance = useCallback((aidId, contract_address) => {
 		return Service.getProjectTokenBalance(aidId, contract_address);
-	}, []);
-
-	const getProjectPackageBalance = useCallback((aidId, contract_address) => {
-		return Service.getProjectPackageBalance(aidId, contract_address);
 	}, []);
 
 	const getBeneficiaryIssuedTokens = useCallback((phone, contract_address) => {
@@ -245,15 +242,11 @@ export const AidContextProvider = ({ children }) => {
 				uploadBenfToProject,
 				listMobilizersByProject,
 				sendTokenIssuedSms,
-				sendPackageIssuedSms,
-				getProjectPackageBalance,
 				issueBeneficiaryPackage,
 				getBeneficiaryById,
 				issueBenfToken,
 				mintNft,
 				createNft,
-				listNftPackages,
-				getPackageDetails,
 				updateAid,
 				addAid,
 				listAid,
@@ -267,12 +260,14 @@ export const AidContextProvider = ({ children }) => {
 				addProjectBudget,
 				changeProjectStatus,
 				getProjectCapital,
+				setProjectCapital,
 				listFinancialInstitutions,
 				bulkTokenIssueToBeneficiary,
 				getBeneficiaryIssuedTokens,
 				suspendBeneficiaryToken,
 				getProjectsBalances,
-				getProjectTokenBalance
+				getProjectTokenBalance,
+				setAidBalance
 			}}
 		>
 			{children}

@@ -283,7 +283,7 @@ export default function NewAsset({ match }) {
 										{item.item_name || ''}
 										{'-'}
 										{item.item_quantity || '0'}
-										&nbsp; <i onClick={() => handleRemoveItem(item.itemId)} class="fas fa-trash"></i>
+										&nbsp; <i onClick={() => handleRemoveItem(item.itemId)} className="fas fa-trash"></i>
 									</button>
 								))}
 						</FormGroup>
