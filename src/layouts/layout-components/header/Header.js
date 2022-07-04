@@ -275,7 +275,7 @@ export default () => {
 										<p className=" mb-0">{currentUser && currentUser.email ? currentUser.email : ''}</p>
 									</div>
 								</div>
-								<DropdownItem
+								{/* <DropdownItem
 									onClick={() => {
 										History.push('/projects');
 									}}
@@ -291,7 +291,7 @@ export default () => {
 								<DropdownItem onClick={handleProfileLink}>
 									<i className="ti-settings mr-1 ml-1" /> My Account
 								</DropdownItem>
-								<DropdownItem divider />
+								<DropdownItem divider /> */}
 								<DropdownItem onClick={handleLogout}>
 									<i className="fa fa-power-off mr-1 ml-1" /> Logout
 								</DropdownItem>
