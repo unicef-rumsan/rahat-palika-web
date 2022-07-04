@@ -11,7 +11,7 @@ import {
 	DropdownMenu,
 	DropdownItem
 } from 'reactstrap';
-import FeatherIcon from 'feather-icons-react';
+// import FeatherIcon from 'feather-icons-react';
 
 import { AppContext } from '../../../contexts/AppSettingsContext';
 import { getUser, logoutUser } from '../../../utils/sessionManager';
@@ -73,29 +73,29 @@ export default () => {
 		}
 	}, [notifications, wsNotification]);
 
-	const handleNotificationSeen = useCallback(
-		async id => {
-			try {
-				let updatedNotification = await API_CALLS.update(id, { status: true });
-				updatedNotification = getIcons(updatedNotification);
-				let prevNotifications = [...notifications];
-				prevNotifications =
-					prevNotifications &&
-					prevNotifications.length &&
-					prevNotifications.map(item => {
-						if (item._id === updatedNotification._id) {
-							return {
-								...updatedNotification
-							};
-						}
-						return item;
-					});
+	// const handleNotificationSeen = useCallback(
+	// 	async id => {
+	// 		try {
+	// 			let updatedNotification = await API_CALLS.update(id, { status: true });
+	// 			updatedNotification = getIcons(updatedNotification);
+	// 			let prevNotifications = [...notifications];
+	// 			prevNotifications =
+	// 				prevNotifications &&
+	// 				prevNotifications.length &&
+	// 				prevNotifications.map(item => {
+	// 					if (item._id === updatedNotification._id) {
+	// 						return {
+	// 							...updatedNotification
+	// 						};
+	// 					}
+	// 					return item;
+	// 				});
 
-				setNotifications(prevNotifications);
-			} catch (err) {}
-		},
-		[notifications]
-	);
+	// 			setNotifications(prevNotifications);
+	// 		} catch (err) {}
+	// 	},
+	// 	[notifications]
+	// );
 
 	const loadAppSettings = useCallback(() => {
 		return getAppSettings()
@@ -151,15 +151,15 @@ export default () => {
 	// 	}
 	// };
 
-	const redirect = useCallback(
-		async (id, redirectUrl) => {
-			const isSeen = notifications.find(item => item._id === id)?.status;
-			redirectUrl && History.push(redirectUrl);
-			if (isSeen) return;
-			handleNotificationSeen(id);
-		},
-		[handleNotificationSeen, notifications]
-	);
+	// const redirect = useCallback(
+	// 	async (id, redirectUrl) => {
+	// 		const isSeen = notifications.find(item => item._id === id)?.status;
+	// 		redirectUrl && History.push(redirectUrl);
+	// 		if (isSeen) return;
+	// 		handleNotificationSeen(id);
+	// 	},
+	// 	[handleNotificationSeen, notifications]
+	// );
 
 	const handleProfileLink = () => {
 		History.push('/profile');

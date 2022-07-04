@@ -40,7 +40,7 @@ export function getUserPermissions() {
 export async function logoutUser() {
 	localStorage.clear();
 	await DexieService.clearAll();
-	window.location = '/auth/wallet';
+	window.location.replace('/auth/wallet');
 }
 
 export function getUserToken() {
