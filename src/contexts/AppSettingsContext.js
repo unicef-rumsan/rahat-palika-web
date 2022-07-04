@@ -4,6 +4,7 @@ import * as Service from '../services/appSettings';
 import appReduce from '../reducers/appSettingsReducer';
 import ACTION from '../actions/appSettings';
 import DataService from '../services/db';
+import WalletService from '../utils/blockchain/wallet';
 import { BALANCE_TABS } from '../constants';
 
 const initialState = {
@@ -28,6 +29,7 @@ const initialState = {
 	loading: false,
 	openPasscodeModal: false,
 	walletActionMsg: null,
+	palikaWallet: null,
 	pagination: { limit: 10, start: 0, total: 0, currentPage: 1, totalPages: 0 },
 	currentBalanceTab: BALANCE_TABS.TOKEN
 };
@@ -39,7 +41,10 @@ export const AppContextProvider = ({ children }) => {
 	const initApp = useCallback(async () => {
 		let data = await DataService.initAppData();
 		data.hasWallet = data.wallet === null ? false : true;
+		const privateKey = await DataService.get('privateKey');
+		if (privateKey) data.palikaWallet = await WalletService.loadFromPrivateKey(privateKey);
 		if (!data.hasWallet) localStorage.removeItem('address');
+		console.log({data})
 		dispatch({ type: ACTION.INIT_APP, data });
 	}, [dispatch]);
 
@@ -131,6 +136,7 @@ export const AppContextProvider = ({ children }) => {
 				tempIdentity: state.tempIdentity,
 				hasWallet: state.hasWallet,
 				wallet: state.wallet,
+				palikaWallet: state.palikaWallet,
 				walletPasscode: state.walletPasscode,
 				isVerified: state.isVerified,
 				loading: state.loading,

@@ -17,7 +17,8 @@ export default (state, action) => {
 				...state,
 				address: action.data.address,
 				network: action.data.network,
-				hasWallet: action.data.hasWallet
+				hasWallet: action.data.hasWallet,
+				palikaWallet: action.data.palikaWallet
 			};
 
 		case ACTION.SET_LOADING:

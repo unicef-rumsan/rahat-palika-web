@@ -6,15 +6,17 @@ import { History } from '../../../utils/History';
 import BreadCrumb from '../../ui_components/breadcrumb';
 import { GROUPS, TOAST } from '../../../constants';
 import { BeneficiaryContext } from '../../../contexts/BeneficiaryContext';
-import SelectWrapper from '../../global/SelectWrapper';
 import UploadPlaceholder from '../../../assets/images/download.png';
 import { blobToBase64 } from '../../../utils';
 import BootstrapSwitchButton from 'bootstrap-switch-button-react';
 import BankDetailForm from './bankDetailForm';
+import { getProjectFromLS } from '../../../utils/checkProject';
+import { getAidDetails } from '../../../services/aid';
+const projectId = getProjectFromLS();
 
 const AddBeneficiary = () => {
 	const { addToast } = useToasts();
-	const { listProject, addBeneficiary } = useContext(BeneficiaryContext);
+	const {  addBeneficiary } = useContext(BeneficiaryContext);
 	const [bankData, setBankData] = useState(null);
 
 	const [formData, setFormData] = useState({
@@ -44,6 +46,7 @@ const AddBeneficiary = () => {
 
 	const [loading, setLoading] = useState(false);
 	const [projectList, setProjectList] = useState([]);
+	const [projectDetails,setProjectDetails] = useState(null);
 
 	const [selectedGender, setSelectedGender] = useState('');
 	const [selectedGroup, setSelectedGroup] = useState('');
@@ -112,22 +115,15 @@ const AddBeneficiary = () => {
 
 	const handleCancelClick = () => History.push('/projects/current');
 
-	const loadProjects = useCallback(async () => {
-		const projects = await listProject();
-		if (projects && projects.data.length) {
-			const select_options = projects.data.map(p => {
-				return {
-					label: p.name,
-					value: p._id
-				};
-			});
-			setProjectList(select_options);
-		}
-	}, [listProject]);
+
+	const fetchProjectDetails = useCallback(async() => {
+		const projectDetails = await getAidDetails(projectId);
+		setProjectDetails(projectDetails);
+	},[])
 
 	useEffect(() => {
-		loadProjects();
-	}, [loadProjects]);
+		fetchProjectDetails();
+	}, [fetchProjectDetails]);
 
 	return (
 		<div>
@@ -179,13 +175,7 @@ const AddBeneficiary = () => {
 								</Row>
 								<FormGroup>
 									<Label>Project</Label>
-									<SelectWrapper
-										multi={true}
-										onChange={handleProjectChange}
-										maxMenuHeight={150}
-										data={projectList}
-										placeholder="--Select Project--"
-									/>
+									<Input type="text" name="project" value={projectDetails?.name || '-'} disabled/>
 								</FormGroup>
 
 								<FormGroup>

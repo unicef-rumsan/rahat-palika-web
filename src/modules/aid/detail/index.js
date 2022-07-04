@@ -60,10 +60,10 @@ export default function Index(props) {
 		try {
 			setFetchingBlockchain(true);
 			const { rahat_admin } = agency.contracts;
+			console.log({projectId})
 			await getProjectCapital(projectId, rahat_admin);
 			await getAidBalance(projectId, rahat_admin);
 			const res = await getProjectPackageBalance(projectId, rahat_admin);
-			console.log({ res });
 			setTotalFiatBalance(res?.projectCapital?.grandTotal || 0);
 			setTotalRemainingFiatBalance(res?.remainingBalance?.grandTotal || 0);
 		} catch (err) {
