@@ -58,7 +58,7 @@ export default function VendorInfo(props) {
 								<div className="sub-title">Registration Date</div>
 							</div>
 						</Col>
-						<Col md="4" sm="12">
+						<Col md="3" sm="12">
 							<div className="card-data">
 								<p className="card-font-medium">{information.gender || '-'}</p>
 								<div className="sub-title">Gender</div>
@@ -77,7 +77,7 @@ export default function VendorInfo(props) {
 								<div className="sub-title">PAN number</div>
 							</div>
 						</Col>
-						<Col md="4" sm="12">
+						<Col md="5" sm="12">
 							<Carousel
 								images={CarouselData}
 								hasMediaButton={false}
