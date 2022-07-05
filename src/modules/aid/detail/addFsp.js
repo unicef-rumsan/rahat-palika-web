@@ -5,7 +5,6 @@ import { AppContext } from '../../../contexts/AppSettingsContext';
 import { History } from '../../../utils/History';
 import FspSelector from '../../global/FspSelector';
 import GrowSpinner from '../../../modules/global/GrowSpinner';
-import BreadCrumb from '../../ui_components/breadcrumb';
 import { addFsp } from '../../../services/fsp';
 import { getProjectFromLS } from '../../../utils/checkProject';
 
