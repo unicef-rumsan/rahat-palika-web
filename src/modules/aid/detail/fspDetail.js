@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react';
-import { useToasts } from 'react-toast-notifications';
+import React from 'react';
 import Select from 'react-select';
 import { useHistory } from 'react-router-dom';
 
@@ -11,7 +10,6 @@ import {
 	Button,
 	Table,
 	CustomInput,
-	Input,
 	CardTitle,
 	Label,
 	FormGroup,
@@ -21,7 +19,6 @@ import {
 	ModalFooter
 } from 'reactstrap';
 import BreadCrumb from '../../ui_components/breadcrumb';
-import  {Link}  from 'react-router-dom';
 import Balance from '../../ui_components/balance';
 
 export default function DetailsForm(props) {
@@ -36,11 +33,7 @@ export default function DetailsForm(props) {
 				<ModalBody>
 					<FormGroup>
 						<Label>Project *</Label>
-						<Select
-							closeMenuOnSelect={true}
-							defaultValue={[]}
-							placeholder="--Select Project--"
-						/>
+						<Select closeMenuOnSelect={true} defaultValue={[]} placeholder="--Select Project--" />
 						<br />
 					</FormGroup>
 				</ModalBody>
@@ -49,18 +42,17 @@ export default function DetailsForm(props) {
 						<Button type="button" color="primary">
 							Submit
 						</Button>
-						<Button color="secondary">
-							Cancel
-						</Button>
+						<Button color="secondary">Cancel</Button>
 					</React.Fragment>
 				</ModalFooter>
 			</Modal>
-			<div className='mb-3 ml-2'>
-				<Button className="btn" onClick={() => history.goBack()}>Go Back</Button >
-			</div>	
+			<div className="mb-3 ml-2">
+				<Button className="btn" onClick={() => history.goBack()}>
+					Go Back
+				</Button>
+			</div>
 			<Row>
 				<Col md="7">
-
 					<Card>
 						<div className="stat-card-body" style={{ minHeight: 120 }}>
 							<CardTitle className="title" style={{ flexBasis: '70%' }}>
@@ -69,7 +61,7 @@ export default function DetailsForm(props) {
 
 							<Row>
 								<Col md="12" sm="8" style={{ marginBottom: '10px' }}>
-									<div style={{ display: 'flex', alignItems: 'center',justifyContent:'space-around' }}>
+									<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
 										<img
 											src={'https://assets.rumsan.com/esatya/nabil-bank-logo.png'}
 											alt="user"
@@ -92,97 +84,84 @@ export default function DetailsForm(props) {
 					</Card>
 				</Col>
 				<Col md="5">
-					<Balance
-						action=""
-						title="Beneficiaries"
-						button_name=""
-						handleIssueToken=""
-					/>
+					<Balance action="" title="Beneficiaries" button_name="" handleIssueToken="" />
 				</Col>
 			</Row>
 			<Row>
-				<Col md='12'>
-				<Card>
-					<div className="stat-card-body" style={{ minHeight: 120 }}>
-						<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-							<CardTitle className="title" style={{ flexBasis: '90%' }}>
-								More Information
-							</CardTitle>
-							<div style={{ flexBasis: '10%' }}>
-								<button
-									type="button"
-									className="btn waves-effect waves-light btn-info"
-									style={{ borderRadius: '8px' }}
-								>
-									Edit
-								</button>
+				<Col md="12">
+					<Card>
+						<div className="stat-card-body" style={{ minHeight: 120 }}>
+							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
+								<CardTitle className="title" style={{ flexBasis: '90%' }}>
+									More Information
+								</CardTitle>
 							</div>
+							<Row>
+								<Col md="4" sm="12">
+									<div className="card-data">
+										<p className="card-font-medium">Flood Distribution</p>
+										<div className="sub-title">Project Name</div>
+									</div>
+									<div className="card-data">
+										<p className="card-font-medium">bank@nabil.com</p>
+										<div className="sub-title">Email</div>
+									</div>
+								</Col>
+								<Col md="4" sm="12">
+									<div className="card-data">
+										<p className="card-font-medium">009333888388333</p>
+										<div className="sub-title">Bank Account Number</div>
+									</div>
+									<div className="card-data">
+										<p className="card-font-medium">01-332332</p>
+										<div className="sub-title">Phone Number</div>
+									</div>
+								</Col>
+								<Col md="4" sm="12">
+									<div className="card-data ">
+										<p className="card-font-medium">18-07-2022</p>
+										<div className="sub-title">Registration Date</div>
+									</div>
+									<div className="card-data">
+										<p className="card-font-medium">Lalitpur Palika</p>
+										<div className="sub-title">Agency/Palika Name</div>
+									</div>
+								</Col>
+							</Row>
 						</div>
-						<Row>
-							<Col md="4" sm="12">
-							<div className="card-data">
-									<p className="card-font-medium">Flood Distribution</p>
-									<div className="sub-title">Project Name</div>
-								</div>
-								<div className="card-data">
-									<p className="card-font-medium">bank@nabil.com</p>
-									<div className="sub-title">Email</div>
-								</div>
-								
-								<div className="card-data">
-									<p className="card-font-medium">Lalitpur Palika</p>
-									<div className="sub-title">Agency/Palika Name</div>
-								</div>
-							</Col>
-							<Col md="4" sm="12">
-								<div className="card-data">
-									<p className="card-font-medium">009333888388333</p>
-									<div className="sub-title">Project Account Number</div>
-								</div>
-								<div className="card-data">
-									<p className="card-font-medium">01-332332</p>
-									<div className="sub-title">Phone Number</div>
-								</div>
-							</Col>
-							<Col md="4" sm="12">
-								<div className="card-data ">
-									<p className="card-font-medium">18-07-2022</p>
-								<div className="sub-title">Registration Date</div>
-								</div>
-							</Col>
-						</Row>
-					</div>
-				</Card>
+					</Card>
 				</Col>
 			</Row>
 			<Row>
 				<Col md="12">
 					<Card>
 						<CardBody>
-						<CardTitle className="mb-0 p-3">
-						<Row>
-							  <Col md="6">Beneficiary Details</Col>
-							  <Col md="6">
-									<div
-										style={{
-											float: 'right',
-											display: 'flex'
-										}}
-									>
-										<CustomInput
-											type="select"
-											id="exampleCustomSelect"
-											name="customSelect"
-											defaultValue=""
-											style={{ width: 'auto', marginRight: '5px' }}
+							<CardTitle className="mb-0 p-3">
+								<Row>
+									<Col md="6">Beneficiary Details</Col>
+									<Col md="6">
+										<div
+											style={{
+												float: 'right',
+												display: 'flex'
+											}}
 										>
-											<option value="phone">Filter By</option>
-											<option value="name">Status</option>
-										</CustomInput>
-									</div>
-							  </Col>
-						</Row>
-					</CardTitle>
+											<CustomInput
+												type="select"
+												id="exampleCustomSelect"
+												name="customSelect"
+												defaultValue=""
+												style={{ width: 'auto', marginRight: '5px' }}
+											>
+												<option value="">Filter By</option>
+												<option value="created_date">Created Date</option>
+												<option value="status">Status</option>
+												<option value="amount">Amount</option>
+											</CustomInput>
+										</div>
+									</Col>
+								</Row>
+							</CardTitle>
 							<Table className="no-wrap v-middle" responsive>
 								<thead>
 									<tr className="border-0">
@@ -194,10 +173,9 @@ export default function DetailsForm(props) {
 									</tr>
 								</thead>
 								<tbody>
-							
-										<tr>
-											<td colSpan={5}>No data available.</td>
-										</tr>
+									<tr>
+										<td colSpan={5}>No data available.</td>
+									</tr>
 								</tbody>
 							</Table>
 						</CardBody>
