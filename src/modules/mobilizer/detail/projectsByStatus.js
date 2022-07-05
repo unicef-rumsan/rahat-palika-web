@@ -24,7 +24,6 @@ export default function PrejctsByStatus({ mobilizerProjects, handleApproveReject
 							<tr className="border-0">
 								<th className="border-0">Project</th>
 								<th className="border-0">Status</th>
-								<th className="border-0">Action</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -34,25 +33,6 @@ export default function PrejctsByStatus({ mobilizerProjects, handleApproveReject
 										<tr key={index}>
 											<td>{p.project.name || ''}</td>
 											<td>{renderStatus(p.status) || '-'}</td>
-											<td>
-												{p.status === MOBIZ_STATUS.ACTIVE ? (
-													<Button
-														type="button"
-														onClick={() => handleApproveReject(p.project._id, MOBIZ_STATUS.SUSPENDED)}
-														color="danger"
-													>
-														Suspend
-													</Button>
-												) : (
-													<Button
-														type="button"
-														onClick={() => handleApproveReject(p.project._id, MOBIZ_STATUS.ACTIVE)}
-														color="success"
-													>
-														Activate
-													</Button>
-												)}
-											</td>
 										</tr>
 									);
 								})
