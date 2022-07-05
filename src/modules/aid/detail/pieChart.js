@@ -8,12 +8,12 @@ export default function Chart({ available_tokens, total_tokens, fetching }) {
 	useEffect(() => {
 		if (available_tokens && total_tokens)
 			setPieData({
-				labels: ['Available', 'Issued', 'Used'],
+				labels: ['Available', 'Issued', 'Used', 'Redeemed'],
 				datasets: [
 					{
-						data: [available_tokens, total_tokens, total_tokens - available_tokens],
-						backgroundColor: ['#2b7ec1', '#fd7e14', '#cece'],
-						hoverBackgroundColor: ['#2b7ec1', '#fd7e14', '#cece']
+						data: [available_tokens, total_tokens, total_tokens - available_tokens, 11],
+						backgroundColor: ['#2b7ec1', '#fd7e14', '#fc0345', '#03fc73'],
+						hoverBackgroundColor: ['#2b7ec1', '#fd7e14', '#fc0345', '#03fc73']
 					}
 				]
 			});
