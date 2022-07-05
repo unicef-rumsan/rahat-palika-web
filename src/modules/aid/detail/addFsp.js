@@ -15,6 +15,7 @@ const AddFsp = params => {
 	const { addToast } = useToasts();
 	const [formData, setFormData] = useState({
 		name: '',
+		account_number: '',
 		bisCode: '',
 		email: '',
 		phone: '',
@@ -28,21 +29,23 @@ const AddFsp = params => {
 		e.preventDefault();
 		const projectId = getProjectFromLS();
 		try {
+			console.log(formData);
 			const response = await addFsp(projectId, formData);
 			if (response.status === 200) {
 				addToast('Fsp Added Successfully', { appearance: 'success', autoDismiss: true });
-				History.push('/current/projects');
+				History.push('/projects/current');
 			}
 		} catch (error) {
 			console.log(error);
 		}
 	};
 
-	const handleCancelClick = () => History.push('/projects');
+	const handleCancelClick = () => History.push('/projects/current');
 	const matchFsp = data => {
-		const { name, bisCode, address, email, phone } = data;
+		const { name, bisCode, address, email, phone, account_number } = data;
 		const bankValue = {
 			name,
+			account_number,
 			bisCode: bisCode,
 			email: email,
 			address,
@@ -50,18 +53,27 @@ const AddFsp = params => {
 		};
 		setFormData(bankValue);
 	};
-
 	return (
 		<div style={{ marginTop: '100px' }}>
-			<p className="page-heading">FSP</p>
-			<BreadCrumb redirect_path="fsp" root_label="FSP" current_label="Add" />
-
 			<Row>
 				<Col md="12">
 					<Card>
 						<CardBody>
-							<Form onSubmit={handleFormSubmit} style={{ color: '#6B6C72' }}>
+							<p className="page-heading mb-5">Add New FSP</p>
+							<Form onSubmit={handleFormSubmit}>
 								<Row>
+									<Col lg={4} md={12}>
+										<FormGroup>
+											<Label>Bank Name</Label>
+											<FspSelector
+												fsp={selectorFsp}
+												onChange={e => {
+													matchFsp(e);
+												}}
+												label={false}
+											/>
+										</FormGroup>
+									</Col>
 									<Col lg={4} md={12}>
 										<FormGroup>
 											<Label>Swift Code</Label>
@@ -77,7 +89,33 @@ const AddFsp = params => {
 									</Col>
 									<Col lg={4} md={12}>
 										<FormGroup>
-											<Label>Contact Email</Label>
+											<Label>
+												Bank Account Number <span className="text-danger">*</span>
+											</Label>
+											<Input
+												type="text"
+												name="account_number"
+												onChange={handleInputChange}
+												defaultValue={formData.account_number}
+												required
+											/>
+										</FormGroup>
+									</Col>
+								</Row>
+								<Row>
+									<Col lg={4} md={12}>
+										<FormGroup>
+											<Label>
+												Contact Name<span className="text-danger">*</span>
+											</Label>
+											<Input name="contact_name" type="text" required />
+										</FormGroup>
+									</Col>
+									<Col lg={4} md={12}>
+										<FormGroup>
+											<Label>
+												Contact Email<span className="text-danger">*</span>
+											</Label>
 											<Input
 												name="email"
 												onChange={handleInputChange}
@@ -89,7 +127,9 @@ const AddFsp = params => {
 									</Col>
 									<Col lg={4} md={12}>
 										<FormGroup>
-											<Label>Contact Phone</Label>
+											<Label>
+												Contact Phone<span className="text-danger">*</span>
+											</Label>
 											<Input
 												name="phone"
 												onChange={handleInputChange}
@@ -100,46 +140,24 @@ const AddFsp = params => {
 										</FormGroup>
 									</Col>
 								</Row>
-								<Row>
-									<Col lg={6} md={12}>
-										<FormGroup>
-											<Label>Bank Name</Label>
-											<FspSelector
-												fsp={selectorFsp}
-												onChange={e => {
-													matchFsp(e);
-												}}
-												label={false}
-											/>
-										</FormGroup>
-									</Col>
-									<Col lg={6} md={12} style={{ marginTop: '0.1rem' }}>
-										<FormGroup>
-											<Label>Contact Name</Label>
-											<Input name="contact_name" type="text" required />
-										</FormGroup>
-									</Col>
-								</Row>
 
-								<CardBody style={{ paddingLeft: 0 }}>
-									{loading ? (
-										<GrowSpinner />
-									) : (
-										<div>
-											<Button type="submit" className="btn btn-info">
-												<i className="fa fa-check"></i> Submit
-											</Button>
-											<Button
-												type="button"
-												onClick={handleCancelClick}
-												style={{ borderRadius: 8 }}
-												className="btn btn-dark ml-2"
-											>
-												Cancel
-											</Button>
-										</div>
-									)}
-								</CardBody>
+								{loading ? (
+									<GrowSpinner />
+								) : (
+									<div>
+										<Button type="submit" className="btn btn-info">
+											<i className="fa fa-check"></i> Submit
+										</Button>
+										<Button
+											type="button"
+											onClick={handleCancelClick}
+											style={{ borderRadius: 8 }}
+											className="btn btn-dark ml-2"
+										>
+											Cancel
+										</Button>
+									</div>
+								)}
 							</Form>
 						</CardBody>
 					</Card>
