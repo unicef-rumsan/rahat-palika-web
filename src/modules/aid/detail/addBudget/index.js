@@ -48,7 +48,7 @@ export default function BudgetAdd({ match }) {
 							</NavLink>
 						</NavItem>
 					</Nav>
-					<TabContent className="pt-2" activeTab={activeTab}>
+					<TabContent className="pt-2 border" activeTab={activeTab}>
 						<TabPane tabId="1">
 							<Row>
 								<Col sm="12">

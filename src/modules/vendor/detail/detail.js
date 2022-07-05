@@ -1,5 +1,5 @@
 import React, { useContext, useCallback, useEffect, useState } from 'react';
-import { Row, Col, Card, CardTitle, FormGroup, Label } from 'reactstrap';
+import { Button, Row, Col, Card, CardTitle, FormGroup, Label } from 'reactstrap';
 import { useToasts } from 'react-toast-notifications';
 import { useHistory } from 'react-router-dom';
 
@@ -8,7 +8,6 @@ import TransactionHistory from './transactions';
 import { VendorContext } from '../../../contexts/VendorContext';
 import { AppContext } from '../../../contexts/AppSettingsContext';
 import displayPic from '../../../assets/images/users/user_avatar.svg';
-import BreadCrumb from '../../ui_components/breadcrumb';
 import PasscodeModal from '../../global/PasscodeModal';
 import { TOAST } from '../../../constants';
 import { History } from '../../../utils/History';
@@ -213,7 +212,7 @@ const Index = ({ params }) => {
 	}, [handleApproveVendor, isVerified, wallet]);
 
 	return (
-		<>
+		<div className="container-fluid" style={{ marginTop: '100px' }}>
 			<PasscodeModal isOpen={passcodeModal} toggleModal={togglePasscodeModal}></PasscodeModal>
 
 			{/* Add to project modal */}
@@ -252,18 +251,20 @@ const Index = ({ params }) => {
 					/>
 				</FormGroup>
 			</ModalWrapper>
-			{/* End Add to project modal */}
 
-			<p className="page-heading">Vendors</p>
-			<BreadCrumb redirect_path="vendors" root_label="Vendors" current_label="Details" />
+			{/* End Add to project modal */}
+			<div>
+				<Button className="btn" onClick={() => history.goBack()}>
+					Go Back
+				</Button>
+			</div>
 			<Row>
 				<Col md="7">
 					<Card>
 						<div className="stat-card-body" style={{ minHeight: 120 }}>
 							<CardTitle className="title" style={{ flexBasis: '70%' }}>
-								Vendor Detail
+								Vendor details
 							</CardTitle>
-
 							<Row>
 								<Col md="8" sm="8" style={{ marginBottom: '10px' }}>
 									<div style={{ display: 'flex', alignItems: 'center' }}>
@@ -293,7 +294,7 @@ const Index = ({ params }) => {
 						</div>
 					</Card>
 				</Col>
-				<Col md="5">
+				<Col md="5" style={{ minHeight: 120 }}>
 					<Balance
 						action=""
 						title="Balance"
@@ -305,10 +306,9 @@ const Index = ({ params }) => {
 					/>
 				</Col>
 			</Row>
-
 			<VendorInfo information={basicInfo} etherBalance={vendorEtherBalance} />
 			<TransactionHistory fetching={fetchingTokenTransaction} transactions={transactionList} vendorId={id} />
-		</>
+		</div>
 	);
 };
 

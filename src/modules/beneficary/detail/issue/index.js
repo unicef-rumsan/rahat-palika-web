@@ -43,7 +43,7 @@ export default function BudgetAdd({ match }) {
 							</NavLink>
 						</NavItem>
 					</Nav>
-					<TabContent className="pt-2" activeTab={currentBalanceTab === BALANCE_TABS.TOKEN ? '1' : '2'}>
+					<TabContent className="pt-2 border" activeTab={currentBalanceTab === BALANCE_TABS.TOKEN ? '1' : '2'}>
 						<TabPane tabId="1">
 							<Row>
 								<Col sm="12">

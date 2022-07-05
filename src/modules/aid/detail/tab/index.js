@@ -60,7 +60,7 @@ const Tabs = ({ projectId }) => {
 							</NavLink>
 						</NavItem>
 					</Nav>
-					<TabContent className="pt-4" activeTab={activeTab}>
+					<TabContent className="pt-4 border" activeTab={activeTab}>
 						<TabPane tabId="1">
 							<Row>
 								<Col sm="12">
