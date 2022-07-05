@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
-import { Table, FormGroup, InputGroup, Input,CustomInput } from 'reactstrap';
+import { Table, FormGroup, InputGroup, Input, CustomInput } from 'reactstrap';
 import { useToasts } from 'react-toast-notifications';
 import QRCode from 'qrcode';
 import * as XLSX from 'xlsx';
@@ -62,23 +62,25 @@ const List = ({ projectId }) => {
 		hiddenFileInput.current.click();
 	};
 
-		const appendBeneficiaryBalances = useCallback(({beneficiaries,balances}) => {
-		const beneficiariesWithTokens = beneficiaries.map((ben,i) => {
-			ben.tokenBalance = balances[i]
+	const appendBeneficiaryBalances = useCallback(({ beneficiaries, balances }) => {
+		const beneficiariesWithTokens = beneficiaries.map((ben, i) => {
+			ben.tokenBalance = balances[i];
 			return ben;
-		})
+		});
 		setBenList(beneficiariesWithTokens);
 		setfetchingBeneficiaryTokens(false);
+	}, []);
 
-	},[])
-
-	const fetchBeneficiariesBalances = useCallback(async({beneficiaries}) => {
-		if(!appSettings || !appSettings.agency || !appSettings.agency.contracts) return;
-		const { agency } = appSettings
-		setfetchingBeneficiaryTokens(true);
-		const balances = await getBeneficiariesBalances(beneficiaries,agency.contracts.rahat);
-		if(balances.length) await appendBeneficiaryBalances({beneficiaries,balances})
-	},[appSettings,getBeneficiariesBalances,appendBeneficiaryBalances])
+	const fetchBeneficiariesBalances = useCallback(
+		async ({ beneficiaries }) => {
+			if (!appSettings || !appSettings.agency || !appSettings.agency.contracts) return;
+			const { agency } = appSettings;
+			setfetchingBeneficiaryTokens(true);
+			const balances = await getBeneficiariesBalances(beneficiaries, agency.contracts.rahat);
+			if (balances.length) await appendBeneficiaryBalances({ beneficiaries, balances });
+		},
+		[appSettings, getBeneficiariesBalances, appendBeneficiaryBalances]
+	);
 
 	const handleUploadListSubmit = async e => {
 		e.preventDefault();
@@ -122,7 +124,6 @@ const List = ({ projectId }) => {
 			const data = XLSX.utils.sheet_to_csv(ws, { header: 1 });
 			/* Update state */
 			const jsonData = convertToJson(data);
-			//const sanitizedJson = jsonData.map((el) =>{return {name:el.name,address:el.address,phone:el.phone}})
 			setUploadPreview(jsonData);
 		};
 		reader.readAsBinaryString(file);
@@ -138,7 +139,7 @@ const List = ({ projectId }) => {
 			let currentline = lines[i].split(',');
 
 			for (let j = 0; j < headers.length; j++) {
-				obj[headers[j]] = currentline[j];
+				obj[headers[j].toLowerCase()] = currentline[j];
 			}
 			result.push(obj);
 		}
@@ -161,9 +162,9 @@ const List = ({ projectId }) => {
 			const query = { start, limit: PAGE_LIMIT };
 			const data = await beneficiaryByAid(projectId, query);
 			setBenList(data.data);
-			fetchBeneficiariesBalances({beneficiaries:data.data})
+			fetchBeneficiariesBalances({ beneficiaries: data.data });
 		},
-		[beneficiaryByAid, projectId,fetchBeneficiariesBalances]
+		[beneficiaryByAid, projectId, fetchBeneficiariesBalances]
 	);
 
 	const convertQrToImg = async data => {
@@ -346,57 +347,17 @@ const List = ({ projectId }) => {
 						/>
 					</div>
 				</div>
-			
-				{/* <Row>
-					<Col md="12">
-						<div
-							style={{
-								float: 'right',
-								display: 'flex',
-								justifyContent:'flex-end'
-							}}
-						>
-							<CustomInput
-								type="select"
-								id="exampleCustomSelect"
-								name="customSelect"
-								defaultValue=""
-								style={{ marginRight: '5px' }}
-							>
-								<option value="phone">Search By Phone</option>
-								<option value="name">By Name</option>
-							</CustomInput>
-							<div style={{ display: 'inline-flex' }}>
-								<Input
-									placeholder=''
-									style={{ width: '100%' }}
-								/>
-							</div>
-							<div>
-								<Button className="btn" color="info">
-									Add New
-								</Button>
-						</div>
-						</div>
-					</Col>
-				</Row> */}
-
-				<div className="flex-item">
-					{/* <button type="button" className="btn waves-effect waves-light btn-info" style={{ borderRadius: '8px' }}>
-						Add Beneficiary
-					</button> */}
-				</div>
+				<div className="flex-item"></div>
 			</div>
 			<div>
 				<div className="row">
-					<div style={{ flex: 1}}>
-					</div>
+					<div style={{ flex: 1 }}></div>
 					<CustomInput
 						type="select"
 						id="exampleCustomSelect"
 						name="customSelect"
 						defaultValue=""
-						style={{ marginRight: '5px',width:'12%' }}
+						style={{ marginRight: '5px', width: '12%' }}
 					>
 						<option value="phone">Filter By</option>
 						<option value="name">Name</option>
@@ -404,25 +365,18 @@ const List = ({ projectId }) => {
 						<option value="banked-unbanked">Banked / Unbanked</option>
 						<option value="gender">Gender</option>
 					</CustomInput>
-					<Input
-						placeholder=''
-						style={{ marginRight: '5px',width:'12%' }}
-					/>
-					<div style={{float: 'right' }}>
+					<Input placeholder="" style={{ marginRight: '5px', width: '12%' }} />
+					<div style={{ float: 'right' }}>
 						<button
 							type="button"
 							className="btn waves-effect waves-light btn-outline-info"
 							style={{ borderRadius: '8px' }}
 						>
-							<Link to='/beneficiary/addBeneficiary'>Add New</Link>
+							<Link to="/beneficiary/addBeneficiary">Add New</Link>
 						</button>
 					</div>
 				</div>
-				<div className="flex-item">
-					{/* <button type="button" className="btn waves-effect waves-light btn-info" style={{ borderRadius: '8px' }}>
-						Add Beneficiary
-					</button> */}
-				</div>
+				<div className="flex-item"></div>
 			</div>
 			<Table className="no-wrap v-middle" responsive>
 				<thead>

@@ -39,7 +39,7 @@ const UploadList = ({ data }) => {
 				</thead>
 				<tbody>
 					{records && records.length > 0 ? (
-						records.map((d,i )=> {
+						records.map((d, i) => {
 							return (
 								<tr key={i}>
 									<td>{d.name}</td>
