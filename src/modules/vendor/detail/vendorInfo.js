@@ -1,6 +1,8 @@
-import React from 'react';
-import { Card, CardTitle, Col, Row } from 'reactstrap';
+import 'react-gallery-carousel/dist/index.css';
 import '../../../assets/css/project.css';
+import React from 'react';
+import Carousel from 'react-gallery-carousel';
+import { Card, CardTitle, Col, Row } from 'reactstrap';
 import image from '../../../assets/images/id-icon-1.png';
 import moment from 'moment';
 const IPFS_GATEWAY = process.env.REACT_APP_IPFS_GATEWAY;
@@ -8,6 +10,21 @@ const IPFS_GATEWAY = process.env.REACT_APP_IPFS_GATEWAY;
 export default function VendorInfo(props) {
 	const { information, etherBalance } = props;
 	const { id } = props.information;
+
+	const CarouselData = [
+		{
+			src:
+				information?.extra_files && information?.govt_id_image
+					? `${IPFS_GATEWAY}/ipfs/${information?.govt_id_image}`
+					: image
+		},
+		{
+			src:
+				information?.extra_files && information?.extra_files?.mou_file
+					? `${IPFS_GATEWAY}/ipfs/${information?.extra_files?.mou_file}`
+					: image
+		}
+	];
 
 	return (
 		<div>
@@ -61,28 +78,12 @@ export default function VendorInfo(props) {
 							</div>
 						</Col>
 						<Col md="4" sm="12">
-							<img
-								src={
-									information.extra_files && information.govt_id_image
-										? `${IPFS_GATEWAY}/ipfs/${information.govt_id_image}`
-										: image
-								}
-								alt="identity_photo"
-								width="80%"
-								height="120px"
-								className="card-data"
-							/>
-							<br />
-							<img
-								src={
-									information.extra_files && information.extra_files.mou_file
-										? `${IPFS_GATEWAY}/ipfs/${information.extra_files.mou_file}`
-										: image
-								}
-								alt="mou_file"
-								width="80%"
-								height="120px"
-								className="card-data"
+							<Carousel
+								images={CarouselData}
+								hasMediaButton={false}
+								objectFit="contain"
+								hasThumbnails={false}
+								className="bg-white border"
 							/>
 						</Col>
 					</Row>
