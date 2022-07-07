@@ -34,6 +34,7 @@ const BenefDetails = ({ params }) => {
 	const [basicInfo, setBasicInfo] = useState({});
 	const [extras, setExtras] = useState({});
 	const [projectList, setProjectList] = useState([]);
+	const [fsps, setFsps] = useState();
 	const [currentBalance, setCurrentBalance] = useState('');
 	const [allProjects, setAllProjects] = useState([]);
 	const [assignTokenAmount, setAssignTokenAmount] = useState('');
@@ -144,6 +145,7 @@ const BenefDetails = ({ params }) => {
 			});
 			setProjectList(projects);
 		}
+		if (details?.bank_account?.account_name) setFsps(details?.bank_account?.account_name);
 		await fetchCurrentBalance(details.phone);
 	}, [fetchCurrentBalance, getBeneficiaryDetails, id]);
 
@@ -259,7 +261,7 @@ const BenefDetails = ({ params }) => {
 			</div>
 			{basicInfo && <BeneficiaryInfo basicInfo={basicInfo} extras={extras} />}
 
-			<ProjectInvovled handleAddBtnClick={handleAddBtnClick} showAddBtn={true} projects={projectList} />
+			<ProjectInvovled handleAddBtnClick={handleAddBtnClick} showAddBtn={true} projects={projectList} fsps={fsps} />
 		</>
 	);
 };
