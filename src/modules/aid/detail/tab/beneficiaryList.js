@@ -27,7 +27,7 @@ const ACTION = {
 const List = ({ projectId }) => {
 	const { addToast } = useToasts();
 	const { beneficiaryByAid, bulkTokenIssueToBeneficiary, uploadBenfToProject } = useContext(AidContext);
-	const { loading, setLoading, wallet, isVerified, appSettings } = useContext(AppContext);
+	const { loading, setLoading, palikaWallet: wallet, isVerified, appSettings } = useContext(AppContext);
 	const { getBeneficiariesBalances } = useContext(BeneficiaryContext);
 
 	const [benList, setBenList] = useState([]);
@@ -191,7 +191,6 @@ const List = ({ projectId }) => {
 			setBeneficiaryTokens(beneficiary_tokens);
 			setBeneficiaryPhones(beneficiary_phones);
 			toggleAmountModal();
-			togglePasscodeModal();
 		}
 	};
 
@@ -217,9 +216,8 @@ const List = ({ projectId }) => {
 	};
 
 	const submitBulkTokenIssue = useCallback(async () => {
-		if (wallet && isVerified) {
+		if (wallet) {
 			try {
-				setPasscodeModal(false);
 				setLoading(true);
 				const { contracts } = appSettings.agency;
 				let res = await bulkTokenIssueToBeneficiary({
@@ -247,7 +245,6 @@ const List = ({ projectId }) => {
 		beneficiaryPhones,
 		beneficiaryTokens,
 		bulkTokenIssueToBeneficiary,
-		isVerified,
 		projectId,
 		setLoading,
 		wallet
@@ -269,14 +266,9 @@ const List = ({ projectId }) => {
 		fetchTotalRecords();
 	}, [fetchTotalRecords]);
 
-	useEffect(() => {
-		submitBulkTokenIssue();
-	}, [submitBulkTokenIssue, isVerified]);
-
 	return (
 		<>
 			<MaskLoader isOpen={loading} message="Assigning tokens in bulk." />
-			<PasscodeModal isOpen={passcodeModal} toggleModal={togglePasscodeModal}></PasscodeModal>
 
 			<ModalWrapper
 				toggle={toggleAmountModal}
