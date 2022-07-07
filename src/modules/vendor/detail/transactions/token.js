@@ -45,7 +45,7 @@ const TransactionHistory = props => {
 									})
 								) : (
 									<tr>
-										<td colSpan={2}>No transaction available</td>
+										<td colSpan={4}>No transaction available</td>
 									</tr>
 								)}
 							</tbody>
