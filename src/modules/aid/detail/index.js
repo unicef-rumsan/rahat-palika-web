@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import moment from 'moment';
 import { Row, Col } from 'reactstrap';
 import { useToasts } from 'react-toast-notifications';
 
@@ -16,6 +17,7 @@ export default function Index(props) {
 	const { addToast } = useToasts();
 	const [projectDetails, setProjectDetails] = useState(null);
 	const [projectId, setProjectId] = useState('');
+	const [date, setDate] = useState('');
 	let { id } = props.match.params;
 	const {
 		total_tokens,
@@ -84,13 +86,16 @@ export default function Index(props) {
 					if (existingBalance) {
 						setProjectCapital(existingBalance.total);
 						setAidBalance(existingBalance.balance);
+						setDate(existingBalance.date);
 					} else {
 						// set balance to indexDB from API
 						const { rahat_admin } = agency.contracts;
 						const total = await getProjectCapital(projectId, rahat_admin);
 						const balance = await getAidBalance(projectId, rahat_admin);
 						if (balance && total) {
-							await DataService.setProjectBalance('balance', [{ project: projectId, balance, total }]);
+							await DataService.setProjectBalance('balance', [
+								{ project: projectId, balance, total, date: moment().format('ll') }
+							]);
 						}
 					}
 				}
@@ -103,7 +108,9 @@ export default function Index(props) {
 				const total = await getProjectCapital(projectId, rahat_admin);
 				const balance = await getAidBalance(projectId, rahat_admin);
 				if (balance && total) {
-					await DataService.updateProjectBalance('balance', [{ project: projectId, balance, total }]);
+					await DataService.updateProjectBalance('balance', [
+						{ project: projectId, balance, total, date: moment().format('ll') }
+					]);
 				}
 			}
 		}
@@ -129,7 +136,12 @@ export default function Index(props) {
 				</Col>
 				<Col md="5">
 					{projectDetails && (
-						<PieChart available_tokens={available_tokens} total_tokens={total_tokens} projectId={projectId} />
+						<PieChart
+							available_tokens={available_tokens}
+							total_tokens={total_tokens}
+							projectId={projectId}
+							date={date}
+						/>
 					)}
 				</Col>
 			</Row>
