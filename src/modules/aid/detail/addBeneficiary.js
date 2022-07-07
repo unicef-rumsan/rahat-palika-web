@@ -16,8 +16,8 @@ const projectId = getProjectFromLS();
 
 const AddBeneficiary = () => {
 	const { addToast } = useToasts();
-	const {  addBeneficiary } = useContext(BeneficiaryContext);
-	const [bankData, setBankData] = useState(null);
+	const { addBeneficiary } = useContext(BeneficiaryContext);
+	const [bankData, setBankData] = useState({});
 
 	const [formData, setFormData] = useState({
 		name: '',
@@ -45,12 +45,10 @@ const AddBeneficiary = () => {
 	};
 
 	const [loading, setLoading] = useState(false);
-	const [projectList, setProjectList] = useState([]);
-	const [projectDetails,setProjectDetails] = useState(null);
+	const [projectDetails, setProjectDetails] = useState(null);
 
 	const [selectedGender, setSelectedGender] = useState('');
 	const [selectedGroup, setSelectedGroup] = useState('');
-	const [selectedProjects, setSelectedProjects] = useState('');
 
 	const [profilePic, setProfilePic] = useState('');
 	const [govtId, setGovtId] = useState('');
@@ -82,12 +80,10 @@ const AddBeneficiary = () => {
 
 	const handleFormSubmit = e => {
 		e.preventDefault();
-		if (!selectedProjects.length) return addToast('Please select project', TOAST.ERROR);
-
 		if (selectedGroup) extras.group = selectedGroup;
 		const payload = { ...formData, extras: { ...extras } };
 		payload.bank_account = bankData;
-		payload.projects = selectedProjects;
+		payload.projects = getProjectFromLS();
 		if (selectedGender) payload.gender = selectedGender;
 		if (profilePic) payload.photo = profilePic;
 		if (govtId) payload.govt_id_image = govtId;
@@ -108,18 +104,12 @@ const AddBeneficiary = () => {
 
 	const handleGroupChange = e => setSelectedGroup(e.target.value);
 
-	const handleProjectChange = data => {
-		const values = data.map(d => d.value);
-		setSelectedProjects(values.toString());
-	};
-
 	const handleCancelClick = () => History.push('/projects/current');
 
-
-	const fetchProjectDetails = useCallback(async() => {
+	const fetchProjectDetails = useCallback(async () => {
 		const projectDetails = await getAidDetails(projectId);
 		setProjectDetails(projectDetails);
-	},[])
+	}, []);
 
 	useEffect(() => {
 		fetchProjectDetails();
@@ -175,7 +165,7 @@ const AddBeneficiary = () => {
 								</Row>
 								<FormGroup>
 									<Label>Project</Label>
-									<Input type="text" name="project" value={projectDetails?.name || '-'} disabled/>
+									<Input type="text" name="project" value={projectDetails?.name || '-'} disabled />
 								</FormGroup>
 
 								<FormGroup>

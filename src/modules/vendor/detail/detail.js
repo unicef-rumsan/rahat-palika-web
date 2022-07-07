@@ -28,7 +28,6 @@ const Index = ({ params }) => {
 		getVendorTransactions,
 		getVendorBalance,
 		approveVendor,
-		getVendorPackageBalance,
 		getTokenIdsByProjects,
 		listProjects,
 		addVendorToProject
@@ -133,18 +132,6 @@ const Index = ({ params }) => {
 		[getTokenIdsByProjects]
 	);
 
-	const fetchVendorPackageBalance = useCallback(
-		async (wallet_address, tokenIds) => {
-			if (!appSettings) return;
-			const { agency } = appSettings;
-			const { rahat_erc1155 } = agency.contracts;
-			const wallet_addresses = Array(tokenIds.length).fill(wallet_address);
-			const package_balance = await getVendorPackageBalance(rahat_erc1155, wallet_addresses, tokenIds);
-			setVendorPackageBalance(package_balance);
-		},
-		[appSettings, getVendorPackageBalance]
-	);
-
 	const sanitizeSelectOptions = useCallback(projects => {
 		const select_options = projects.map(d => {
 			return { label: d.name, value: d._id };
@@ -163,12 +150,11 @@ const Index = ({ params }) => {
 			}
 
 			if (details && details.projects && details.projects.length) {
-				const tokenIds = await await fetchTokenIdsByProjects(details.projects);
+				await await fetchTokenIdsByProjects(details.projects);
 				const projects = details.projects.map(d => {
 					return { id: d._id, name: d.name };
 				});
 				setProjectList(projects);
-				await fetchVendorPackageBalance(details.wallet_address, tokenIds);
 			}
 			await fetchVendorBalance(details.wallet_address);
 		} catch (err) {
@@ -176,15 +162,7 @@ const Index = ({ params }) => {
 			setVendorPackageBalance(0);
 			setVendorBalance(0);
 		}
-	}, [
-		fetchTokenIdsByProjects,
-		fetchVendorBalance,
-		fetchVendorPackageBalance,
-		getVendorDetails,
-		id,
-		listProjects,
-		sanitizeSelectOptions
-	]);
+	}, [fetchTokenIdsByProjects, fetchVendorBalance, getVendorDetails, id, listProjects, sanitizeSelectOptions]);
 
 	const fetchVendorTokenTransactions = useCallback(async () => {
 		try {
@@ -263,7 +241,10 @@ const Index = ({ params }) => {
 					<Card>
 						<div className="stat-card-body" style={{ minHeight: 120 }}>
 							<CardTitle className="title" style={{ flexBasis: '70%' }}>
-								Vendor details
+								<Row>
+									<Col md={8}>Vendor details</Col>
+									<Col md={4}>Approve</Col>
+								</Row>
 							</CardTitle>
 							<Row>
 								<Col md="8" sm="8" style={{ marginBottom: '10px' }}>

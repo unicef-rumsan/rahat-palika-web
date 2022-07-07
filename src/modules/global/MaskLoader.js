@@ -11,29 +11,29 @@ export default function MaskLoader(props) {
 					<div style={{ padding: 10 }}>
 						{message || 'Please wait...'} <span style={{ fontSize: 12 }}>This may take a while</span>
 					</div>
-					<div class="spinner-grow text-primary" role="status">
-						<span class="sr-only">Loading...</span>
+					<div className="spinner-grow text-primary" role="status">
+						<span className="sr-only">Loading...</span>
 					</div>
-					<div class="spinner-grow text-secondary" role="status">
-						<span class="sr-only">Loading...</span>
+					<div className="spinner-grow text-secondary" role="status">
+						<span className="sr-only">Loading...</span>
 					</div>
-					<div class="spinner-grow text-success" role="status">
-						<span class="sr-only">Loading...</span>
+					<div className="spinner-grow text-success" role="status">
+						<span className="sr-only">Loading...</span>
 					</div>
-					<div class="spinner-grow text-danger" role="status">
-						<span class="sr-only">Loading...</span>
+					<div className="spinner-grow text-danger" role="status">
+						<span className="sr-only">Loading...</span>
 					</div>
-					<div class="spinner-grow text-warning" role="status">
-						<span class="sr-only">Loading...</span>
+					<div className="spinner-grow text-warning" role="status">
+						<span className="sr-only">Loading...</span>
 					</div>
-					<div class="spinner-grow text-info" role="status">
-						<span class="sr-only">Loading...</span>
+					<div className="spinner-grow text-info" role="status">
+						<span className="sr-only">Loading...</span>
 					</div>
-					<div class="spinner-grow text-dark" role="status">
-						<span class="sr-only">Loading...</span>
+					<div className="spinner-grow text-dark" role="status">
+						<span className="sr-only">Loading...</span>
 					</div>
-					<div class="spinner-grow text-light" role="status">
-						<span class="sr-only">Loading...</span>
+					<div className="spinner-grow text-light" role="status">
+						<span className="sr-only">Loading...</span>
 					</div>
 				</ModalBody>
 			</Modal>

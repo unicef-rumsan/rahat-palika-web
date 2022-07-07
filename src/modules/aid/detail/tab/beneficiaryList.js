@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
-import { Table, FormGroup, InputGroup, Input, CustomInput } from 'reactstrap';
+import { Col, Row, Table, FormGroup, InputGroup, Input, CustomInput } from 'reactstrap';
 import { useToasts } from 'react-toast-notifications';
 import QRCode from 'qrcode';
 import * as XLSX from 'xlsx';
@@ -11,7 +11,6 @@ import { BeneficiaryContext } from '../../../../contexts/BeneficiaryContext';
 import { APP_CONSTANTS, TOAST } from '../../../../constants';
 import { htmlResponse } from '../../../../utils/printBeneficiary';
 import ModalWrapper from '../../../global/CustomModal';
-import PasscodeModal from '../../../global/PasscodeModal';
 import UploadList from './uploadList';
 import AdvancePagination from '../../../global/AdvancePagination';
 import MaskLoader from '../../../global/MaskLoader';
@@ -27,16 +26,13 @@ const ACTION = {
 const List = ({ projectId }) => {
 	const { addToast } = useToasts();
 	const { beneficiaryByAid, bulkTokenIssueToBeneficiary, uploadBenfToProject } = useContext(AidContext);
-	const { loading, setLoading, palikaWallet: wallet, isVerified, appSettings } = useContext(AppContext);
+	const { loading, setLoading, palikaWallet: wallet, appSettings } = useContext(AppContext);
 	const { getBeneficiariesBalances } = useContext(BeneficiaryContext);
 
 	const [benList, setBenList] = useState([]);
 
 	const [amount, setAmount] = useState('');
 	const [amountModal, setAmountModal] = useState(false);
-	const [beneficiaryPhones, setBeneficiaryPhones] = useState([]); // For bulk issue
-	const [beneficiaryTokens, setBeneficiaryTokens] = useState([]); // For bulk issue
-	const [passcodeModal, setPasscodeModal] = useState(false);
 
 	const [uploadListModal, setUploadListModal] = useState(false);
 	const [previewData, setUploadPreview] = useState(null);
@@ -50,14 +46,15 @@ const List = ({ projectId }) => {
 
 	const hiddenFileInput = React.useRef(null);
 
-	const togglePasscodeModal = () => setPasscodeModal(!passcodeModal);
 	const toggleUploadListModal = () => setUploadListModal(!uploadListModal);
 
-	const toggleAmountModal = action => {
-		if (action) setCurrentAction(action);
-		setAmountModal(!amountModal);
-	};
-
+	const toggleAmountModal = useCallback(
+		action => {
+			if (action) setCurrentAction(action);
+			setAmountModal(!amountModal);
+		},
+		[amountModal]
+	);
 	const handleFileUploadClick = event => {
 		hiddenFileInput.current.click();
 	};
@@ -72,12 +69,19 @@ const List = ({ projectId }) => {
 	}, []);
 
 	const fetchBeneficiariesBalances = useCallback(
-		async ({ beneficiaries }) => {
+		async ({ beneficiaries, timeOut }) => {
 			if (!appSettings || !appSettings.agency || !appSettings.agency.contracts) return;
 			const { agency } = appSettings;
 			setfetchingBeneficiaryTokens(true);
-			const balances = await getBeneficiariesBalances(beneficiaries, agency.contracts.rahat);
-			if (balances.length) await appendBeneficiaryBalances({ beneficiaries, balances });
+			if (timeOut) {
+				setTimeout(async () => {
+					const balances = await getBeneficiariesBalances(beneficiaries, agency.contracts.rahat);
+					if (balances.length) appendBeneficiaryBalances({ beneficiaries, balances });
+				}, timeOut);
+			} else {
+				const balances = await getBeneficiariesBalances(beneficiaries, agency.contracts.rahat);
+				if (balances.length) await appendBeneficiaryBalances({ beneficiaries, balances });
+			}
 		},
 		[appSettings, getBeneficiariesBalances, appendBeneficiaryBalances]
 	);
@@ -97,7 +101,7 @@ const List = ({ projectId }) => {
 		} catch (err) {
 			setUploading(false);
 			toggleUploadListModal();
-			const errMsg = err.message ? err.message : 'Internal server error';
+			const errMsg = err && err.message ? err.message : 'Internal server error';
 			addToast(errMsg, TOAST.ERROR);
 		}
 	};
@@ -176,24 +180,63 @@ const List = ({ projectId }) => {
 		return result;
 	};
 
-	const handleBulkTokenIssue = async () => {
+	const submitBulkTokenIssue = useCallback(
+		async ({ beneficiaryPhones, beneficiaryTokens, beneficiaries }) => {
+			if (wallet) {
+				try {
+					setLoading(true);
+					const { contracts } = appSettings.agency;
+					let res = await bulkTokenIssueToBeneficiary({
+						projectId: projectId,
+						phone_numbers: beneficiaryPhones,
+						token_amounts: beneficiaryTokens,
+						contract_address: contracts.rahat,
+						wallet
+					});
+					if (res) {
+						setAmount('');
+						const total_ben = beneficiaryPhones.length;
+						return addToast(`Each of ${total_ben} beneficiary has been assigned ${amount} tokens`, TOAST.SUCCESS);
+					}
+				} catch (err) {
+					addToast(err.message, TOAST.ERROR);
+				} finally {
+					setLoading(false);
+					fetchBeneficiariesBalances({ beneficiaries, timeOut: 1000 });
+				}
+			}
+		},
+		[
+			addToast,
+			amount,
+			appSettings.agency,
+			bulkTokenIssueToBeneficiary,
+			projectId,
+			setLoading,
+			wallet,
+			fetchBeneficiariesBalances
+		]
+	);
+
+	const handleBulkTokenIssue = useCallback(async () => {
 		let beneficiary_tokens = [];
 		if (!amount) return addToast('Please enter token amount', TOAST.ERROR);
 		const { data } = await beneficiaryByAid(projectId, { limit: BULK_BENEFICIARY_LIMIT });
 		if (!data || !data.length) return addToast('No beneficiary available', TOAST.ERROR);
 		if (data.length) {
 			const beneficiary_phones = data.map(d => d.phone);
-			const len = beneficiary_phones.length;
-			if (len < 1) return addToast('No phone number found', TOAST.ERROR);
-			for (let i = 0; i < len; i++) {
+			if (beneficiary_phones.length < 1) return addToast('No phone number found', TOAST.ERROR);
+			for (let i = 0; i < beneficiary_phones.length; i++) {
 				beneficiary_tokens.push(amount);
 			}
-			setBeneficiaryTokens(beneficiary_tokens);
-			setBeneficiaryPhones(beneficiary_phones);
 			toggleAmountModal();
+			await submitBulkTokenIssue({
+				beneficiaryPhones: beneficiary_phones,
+				beneficiaryTokens: beneficiary_tokens,
+				beneficiaries: data
+			});
 		}
-	};
-
+	}, [projectId, beneficiaryByAid, amount, addToast, toggleAmountModal, submitBulkTokenIssue]);
 	const handleBulkQrExport = async () => {
 		const res = await beneficiaryByAid(projectId, { limit: BULK_BENEFICIARY_LIMIT });
 		if (!res || !res.data.length) return addToast('No beneficiay available', TOAST.ERROR);
@@ -214,41 +257,6 @@ const List = ({ projectId }) => {
 			newWindow.close();
 		}, 250);
 	};
-
-	const submitBulkTokenIssue = useCallback(async () => {
-		if (wallet) {
-			try {
-				setLoading(true);
-				const { contracts } = appSettings.agency;
-				let res = await bulkTokenIssueToBeneficiary({
-					projectId: projectId,
-					phone_numbers: beneficiaryPhones,
-					token_amounts: beneficiaryTokens,
-					contract_address: contracts.rahat,
-					wallet
-				});
-				if (res) {
-					setAmount('');
-					const total_ben = beneficiaryPhones.length;
-					return addToast(`Each of ${total_ben} beneficiary has been assigned ${amount} tokens`, TOAST.SUCCESS);
-				}
-			} catch (err) {
-				addToast(err.message, TOAST.ERROR);
-			} finally {
-				setLoading(false);
-			}
-		}
-	}, [
-		addToast,
-		amount,
-		appSettings.agency,
-		beneficiaryPhones,
-		beneficiaryTokens,
-		bulkTokenIssueToBeneficiary,
-		projectId,
-		setLoading,
-		wallet
-	]);
 
 	const fetchTotalRecords = useCallback(async () => {
 		try {
@@ -301,8 +309,8 @@ const List = ({ projectId }) => {
 				<UploadList data={previewData} />
 			</ModalWrapper>
 
-			<div>
-				<div className="row">
+			<div className="container-fluid">
+				<Row>
 					<div style={{ flex: 1, padding: 10 }}>
 						<button
 							onClick={() => toggleAmountModal(ACTION.BULK_ISSUE)}
@@ -338,83 +346,83 @@ const List = ({ projectId }) => {
 							style={{ display: 'none' }}
 						/>
 					</div>
-				</div>
-				<div className="flex-item"></div>
-			</div>
-			<div>
-				<div className="row">
-					<div style={{ flex: 1 }}></div>
-					<CustomInput
-						type="select"
-						id="exampleCustomSelect"
-						name="customSelect"
-						defaultValue=""
-						style={{ marginRight: '5px', width: '12%' }}
-					>
-						<option value="phone">Filter By</option>
-						<option value="name">Name</option>
-						<option value="phoneNumber">Phone Number</option>
-						<option value="banked-unbanked">Banked / Unbanked</option>
-						<option value="gender">Gender</option>
-					</CustomInput>
-					<Input placeholder="" style={{ marginRight: '5px', width: '12%' }} />
-					<div style={{ float: 'right' }}>
-						<button
-							type="button"
-							className="btn waves-effect waves-light btn-outline-info"
-							style={{ borderRadius: '8px' }}
-						>
-							<Link to="/beneficiary/addBeneficiary">Add New</Link>
-						</button>
-					</div>
-				</div>
-				<div className="flex-item"></div>
-			</div>
-			<Table className="no-wrap v-middle" responsive>
-				<thead>
-					<tr className="border-0">
-						<th className="border-0">S.N.</th>
-						<th className="border-0">Name</th>
-						<th className="border-0">Address</th>
-						<th className="border-0">Phone number</th>
-						<th className="border-0">Token</th>
-					</tr>
-				</thead>
-				<tbody>
-					{benList.length > 0 ? (
-						benList.map((d, i) => {
-							return (
-								<tr key={d._id}>
-									<td>{(currentPage - 1) * PAGE_LIMIT + i + 1}</td>
-									<td>
-										<Link style={{ color: '#2b7ec1' }} to={`/beneficiaries/${d._id}`}>
-											{d.name}
-										</Link>
-									</td>
-									<td>{d.address || '-'}</td>
-									<td>{d.phone}</td>
-									<td>{fetchingBeneficiaryTokens ? <MiniSpinner /> : d.tokenBalance ? d.tokenBalance : '0'}</td>
-								</tr>
-							);
-						})
-					) : (
-						<tr>
-							<td colSpan={3}></td>
-							<td>No data available.</td>
-							<td colSpan={2}></td>
-						</tr>
-					)}
-				</tbody>
-			</Table>
+				</Row>
 
-			{totalRecords > 0 && (
-				<AdvancePagination
-					totalRecords={totalRecords}
-					pageLimit={PAGE_LIMIT}
-					pageNeighbours={1}
-					onPageChanged={onPageChanged}
-				/>
-			)}
+				<Row>
+					<Col>
+						<div className="input-group" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+							<CustomInput
+								type="select"
+								id="customInput-filter"
+								style={{ maxWidth: '150px' }}
+								className="m-2"
+								name="customSelect"
+								defaultValue=""
+							>
+								<option value="phone">Filter By</option>
+								<option value="name">Name</option>
+								<option value="phoneNumber">Phone Number</option>
+								<option value="banked-unbanked">Banked / Unbanked</option>
+								<option value="gender">Gender</option>
+							</CustomInput>
+							<Input className="m-2" style={{ maxWidth: '250px' }} placeholder="Search here..." />
+
+							<button
+								type="button"
+								className="btn waves-effect waves-light btn-outline-info m-2"
+								style={{ borderRadius: '8px' }}
+							>
+								<Link to="/beneficiary/addBeneficiary">Add New</Link>
+							</button>
+						</div>
+					</Col>
+				</Row>
+				<Table className="no-wrap v-middle" responsive>
+					<thead>
+						<tr className="border-0">
+							<th className="border-0">S.N.</th>
+							<th className="border-0">Name</th>
+							<th className="border-0">Address</th>
+							<th className="border-0">Phone number</th>
+							<th className="border-0">Token</th>
+						</tr>
+					</thead>
+					<tbody>
+						{benList.length > 0 ? (
+							benList.map((d, i) => {
+								return (
+									<tr key={d._id}>
+										<td>{(currentPage - 1) * PAGE_LIMIT + i + 1}</td>
+										<td>
+											<Link style={{ color: '#2b7ec1' }} to={`/beneficiaries/${d._id}`}>
+												{d.name}
+											</Link>
+										</td>
+										<td>{d.address || '-'}</td>
+										<td>{d.phone}</td>
+										<td>{fetchingBeneficiaryTokens ? <MiniSpinner /> : d.tokenBalance ? d.tokenBalance : '0'}</td>
+									</tr>
+								);
+							})
+						) : (
+							<tr>
+								<td colSpan={3}></td>
+								<td>No data available.</td>
+								<td colSpan={2}></td>
+							</tr>
+						)}
+					</tbody>
+				</Table>
+
+				{totalRecords > 0 && (
+					<AdvancePagination
+						totalRecords={totalRecords}
+						pageLimit={PAGE_LIMIT}
+						pageNeighbours={1}
+						onPageChanged={onPageChanged}
+					/>
+				)}
+			</div>
 		</>
 	);
 };

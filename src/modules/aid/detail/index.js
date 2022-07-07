@@ -117,13 +117,12 @@ export default function Index(props) {
 					{projectDetails && (
 						<DetailsCard
 							title="Project Details"
-							button_name="Generate QR Code"
 							name="Project Name"
 							name_value={projectDetails.name}
-							status={projectDetails.status}
 							total="Project Budget"
 							total_value={total_tokens}
-							handleStatusChange={handleStatusChange}
+							status="Status"
+							status_value={projectDetails.status}
 						/>
 					)}
 					{projectDetails && <ProjectInfo projectDetails={projectDetails} />}
