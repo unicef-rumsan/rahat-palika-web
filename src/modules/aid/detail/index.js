@@ -109,8 +109,6 @@ export default function Index(props) {
 		}
 		fetchPackageAndTokenBalance();
 	}, [addToast, appSettings, getAidBalance, getProjectCapital, projectId, setAidBalance, setProjectCapital]);
-
-	console.log(available_tokens, total_tokens);
 	return (
 		<>
 			<div style={{ height: '100px' }}></div>
