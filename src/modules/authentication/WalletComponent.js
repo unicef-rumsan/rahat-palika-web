@@ -1,14 +1,13 @@
+import './wallet.css';
 import React, { useCallback, useRef, useEffect, useState, useContext } from 'react';
 import { useQRCode } from 'react-qrcodes';
 import EthCrypto from 'eth-crypto';
-import { Card, Row, CardTitle, Col, Button, CardText, Form, FormGroup, Input } from 'reactstrap';
+import { Card, Row, CardTitle, Col, Button, CardText } from 'reactstrap';
 import { AppContext } from '../../contexts/AppSettingsContext';
-import Logo from '../../assets/images/rahat-logo-blue.png';
 import DataService from '../../services/db';
-import './wallet.css';
 import { useToasts } from 'react-toast-notifications';
 import { TOAST } from '../../constants';
-import { getRandomString, getRandomEntropy } from '../../utils';
+import { getRandomEntropy } from '../../utils';
 
 const API_SERVER = process.env.REACT_APP_API_SERVER;
 const WSS_SERVER = API_SERVER.replace('http', 'ws');

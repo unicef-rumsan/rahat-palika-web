@@ -27,8 +27,8 @@ const AddFsp = params => {
 	const handleFormSubmit = async e => {
 		e.preventDefault();
 		const projectId = getProjectFromLS();
+		formData.project = projectId;
 		try {
-			console.log(formData);
 			const response = await addFsp(projectId, formData);
 			if (response.status === 200) {
 				addToast('Fsp Added Successfully', { appearance: 'success', autoDismiss: true });

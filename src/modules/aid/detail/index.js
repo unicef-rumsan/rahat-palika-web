@@ -109,7 +109,6 @@ export default function Index(props) {
 		}
 		fetchPackageAndTokenBalance();
 	}, [addToast, appSettings, getAidBalance, getProjectCapital, projectId, setAidBalance, setProjectCapital]);
-
 	return (
 		<>
 			<div style={{ height: '100px' }}></div>
@@ -131,12 +130,7 @@ export default function Index(props) {
 				</Col>
 				<Col md="5">
 					{projectDetails && (
-						<PieChart
-							available_tokens={available_tokens}
-							total_tokens={total_tokens}
-							projectStatus={projectDetails.status}
-							projectId={projectId}
-						/>
+						<PieChart available_tokens={available_tokens} total_tokens={total_tokens} projectId={projectId} />
 					)}
 				</Col>
 			</Row>
