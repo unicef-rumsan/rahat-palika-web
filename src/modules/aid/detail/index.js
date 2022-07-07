@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import moment from 'moment';
 import { Row, Col } from 'reactstrap';
 import { useToasts } from 'react-toast-notifications';
@@ -53,6 +53,46 @@ export default function Index(props) {
 			});
 	};
 
+	const fetchPackageAndTokenBalance = useCallback(async () => {
+		if (!appSettings) return;
+		const { agency } = appSettings;
+		if (!agency || !agency.contracts) return;
+		try {
+			if (projectId) {
+				// get balance from indexDB
+				const existingBalance = await DataService.getProjectBalance('balance', projectId);
+				if (existingBalance) {
+					setProjectCapital(existingBalance.total);
+					setAidBalance(existingBalance.balance);
+					setDate(existingBalance.date);
+				} else {
+					// set balance to indexDB from API
+					const { rahat_admin } = agency.contracts;
+					const total = await getProjectCapital(projectId, rahat_admin);
+					const balance = await getAidBalance(projectId, rahat_admin);
+					if (balance && total) {
+						await DataService.setProjectBalance('balance', [
+							{ project: projectId, balance, total, date: moment().format('lll') }
+						]);
+					}
+				}
+			}
+		} catch (err) {
+			console.log({ err });
+			addToast(err.message, TOAST.ERROR);
+		} finally {
+			// Check if API has updated data and set in indexDB
+			const { rahat_admin } = agency.contracts;
+			const total = await getProjectCapital(projectId, rahat_admin);
+			const balance = await getAidBalance(projectId, rahat_admin);
+			if (balance && total) {
+				await DataService.updateProjectBalance('balance', [
+					{ project: projectId, balance, total, date: moment().format('lll') }
+				]);
+			}
+		}
+	}, [addToast, appSettings, getAidBalance, getProjectCapital, projectId, setAidBalance, setProjectCapital]);
+
 	useEffect(() => {
 		async function assignProjectId() {
 			if (id === 'current') {
@@ -75,47 +115,8 @@ export default function Index(props) {
 	useEffect(fetchProjectDetails, [projectId]);
 
 	useEffect(() => {
-		async function fetchPackageAndTokenBalance() {
-			if (!appSettings) return;
-			const { agency } = appSettings;
-			if (!agency || !agency.contracts) return;
-			try {
-				if (projectId) {
-					// get balance from indexDB
-					const existingBalance = await DataService.getProjectBalance('balance', projectId);
-					if (existingBalance) {
-						setProjectCapital(existingBalance.total);
-						setAidBalance(existingBalance.balance);
-						setDate(existingBalance.date);
-					} else {
-						// set balance to indexDB from API
-						const { rahat_admin } = agency.contracts;
-						const total = await getProjectCapital(projectId, rahat_admin);
-						const balance = await getAidBalance(projectId, rahat_admin);
-						if (balance && total) {
-							await DataService.setProjectBalance('balance', [
-								{ project: projectId, balance, total, date: moment().format('ll') }
-							]);
-						}
-					}
-				}
-			} catch (err) {
-				console.log({ err });
-				addToast(err.message, TOAST.ERROR);
-			} finally {
-				// Check if API has updated data and set in indexDB
-				const { rahat_admin } = agency.contracts;
-				const total = await getProjectCapital(projectId, rahat_admin);
-				const balance = await getAidBalance(projectId, rahat_admin);
-				if (balance && total) {
-					await DataService.updateProjectBalance('balance', [
-						{ project: projectId, balance, total, date: moment().format('ll') }
-					]);
-				}
-			}
-		}
 		fetchPackageAndTokenBalance();
-	}, [addToast, appSettings, getAidBalance, getProjectCapital, projectId, setAidBalance, setProjectCapital]);
+	}, [fetchPackageAndTokenBalance]);
 	return (
 		<>
 			<div style={{ height: '100px' }}></div>
@@ -141,6 +142,7 @@ export default function Index(props) {
 							total_tokens={total_tokens}
 							projectId={projectId}
 							date={date}
+							onClick={() => fetchPackageAndTokenBalance()}
 						/>
 					)}
 				</Col>

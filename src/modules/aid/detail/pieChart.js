@@ -3,8 +3,11 @@ import { Card, CardBody, CardTitle, Col, Label, Row } from 'reactstrap';
 import { Pie } from 'react-chartjs-2';
 import Loading from '../../global/Loading';
 
-export default function Chart({ available_tokens, total_tokens, fetching, date }) {
+export default function Chart({ available_tokens, total_tokens, fetching, date, onClick }) {
 	const [pieData, setPieData] = useState({ labels: [], datasets: [] });
+	const handleRefresh = () => {
+		onClick();
+	};
 	useEffect(() => {
 		if (available_tokens && total_tokens)
 			setPieData({
@@ -59,7 +62,15 @@ export default function Chart({ available_tokens, total_tokens, fetching, date }
 								/>
 							)}
 							<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', fontSize: '0.7em' }}>
-								<i>Last Updated at: {date || '-'}</i>
+								<i>
+									Last Updated at: {date || '-'}&nbsp;
+									<span
+										style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+										onClick={() => handleRefresh()}
+									>
+										Refresh
+									</span>
+								</i>
 							</div>
 						</div>
 					)}
