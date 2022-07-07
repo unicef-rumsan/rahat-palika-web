@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardTitle } from 'reactstrap';
 import '../../../assets/css/project.css';
 import Chart from 'react-apexcharts';
-// import Loading from '../../global/Loading';
 
 //Line chart
 const optionssalesummary = {

@@ -11,14 +11,13 @@ const BeneficiaryDetails = lazy(() => import('../modules/beneficary/detail/index
 const AddBeneficiary = lazy(() => import('../modules/beneficary/add'));
 const EditBeneficiary = lazy(() => import('../modules/beneficary/edit'));
 const issueBudget = lazy(() => import('../modules/beneficary/detail/issue'));
-const AddBeneficiaryDetail = lazy(() => import ('../modules/aid/detail/addBeneficiary'));
+const AddBeneficiaryDetail = lazy(() => import('../modules/aid/detail/addBeneficiary'));
 
 // Institutions
 const InstitutionList = lazy(() => import('../modules/institution'));
 const InstitutionDetails = lazy(() => import('../modules/institution/detail/index'));
 
 // Misc
-const Dashboard = lazy(() => import('../modules/dashboard/Dashboard'));
 const Onboard = lazy(() => import('../modules/onboard'));
 
 // Mobilizer
@@ -69,8 +68,8 @@ const NotificationList = lazy(() =>
 
 let AppRoutes = [
 	{
-		path:'/beneficiary/addBeneficiary',
-		name:'AddBeneficiary',
+		path: '/beneficiary/addBeneficiary',
+		name: 'AddBeneficiary',
 		component: AddBeneficiaryDetail,
 		showInSidebar: false
 	},
@@ -85,13 +84,6 @@ let AppRoutes = [
 		name: 'AddFSP',
 		component: AddFsp,
 		showInSidebar: false
-	},
-	{
-		path: '/dashboard',
-		name: 'Dashboard',
-		icon: 'monitor',
-		component: Dashboard,
-		showInSidebar: true
 	},
 	{
 		path: '/profile',
