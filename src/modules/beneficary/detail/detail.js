@@ -1,5 +1,5 @@
 import React, { useContext, useCallback, useEffect, useState } from 'react';
-import { Row, Col, FormGroup, Label, InputGroup, Input } from 'reactstrap';
+import { Button, Col, FormGroup, Input, InputGroup, Label, Row } from 'reactstrap';
 import { useToasts } from 'react-toast-notifications';
 import QRCode from 'qrcode';
 
@@ -224,7 +224,12 @@ const BenefDetails = ({ params }) => {
 					</InputGroup>
 				</FormGroup>
 			</ModalWrapper>
-			<div className="container-fluid mt-5">
+			<div className="container-fluid" style={{ marginTop: '100px' }}>
+				<div className="mb-3 ml-2">
+					<Button className="btn" onClick={() => history.push('/projects/current')}>
+						Go Back
+					</Button>
+				</div>
 				<Row>
 					<Col md="7">
 						<DetailsCard

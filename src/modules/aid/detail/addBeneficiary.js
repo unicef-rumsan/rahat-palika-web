@@ -169,13 +169,17 @@ const AddBeneficiary = () => {
 								</FormGroup>
 
 								<FormGroup>
-									<Label>Name</Label>
+									<Label>
+										Name<span className="text-danger">*</span>
+									</Label>
 									<Input type="text" value={formData.name} name="name" onChange={handleInputChange} required />
 								</FormGroup>
 								<Row>
 									<Col md="6" sm="12">
 										<FormGroup>
-											<Label>Phone</Label>
+											<Label>
+												Phone<span className="text-danger">*</span>
+											</Label>
 											<Input type="number" value={formData.phone} name="phone" onChange={handleInputChange} required />
 										</FormGroup>
 									</Col>
