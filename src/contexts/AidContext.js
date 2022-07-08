@@ -111,7 +111,7 @@ export const AidContextProvider = ({ children }) => {
 		return new Promise((resolve, reject) => {
 			Service.beneficiaryByAid(aidId, params)
 				.then(res => {
-					dispatch({ type: ACTION.BENEF_LIST_SUCCSS, res });
+					dispatch({ type: ACTION.BENEF_LIST_SUCCESS, res });
 					resolve(res);
 				})
 				.catch(err => {

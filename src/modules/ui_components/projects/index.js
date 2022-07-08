@@ -1,11 +1,11 @@
 import React from 'react';
-import { Card, CardTitle,Row,Col } from 'reactstrap';
+import { Card, CardTitle, Row, Col } from 'reactstrap';
 import { useHistory } from 'react-router-dom';
 
 import '../../../assets/css/project.css';
 
 export default function ProjectsInvolved(props) {
-	const { projects, showAddBtn, handleAddBtnClick } = props;
+	const { projects, fsps } = props;
 	const history = useHistory();
 
 	const handleProjectClick = projectId => {
@@ -20,11 +20,11 @@ export default function ProjectsInvolved(props) {
 						<div className="stat-card-body" style={{ minHeight: 120 }}>
 							<CardTitle className="title" style={{ flexBasis: '90%' }}>
 								Projects Involved &nbsp;
-								{showAddBtn && (
+								{/* {showAddBtn && (
 									<a href="#add_project" onClick={handleAddBtnClick} title="Add project">
 										<i className="fas fa-plus"></i>
 									</a>
-								)}
+								)} */}
 							</CardTitle>
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 								<div style={{ flexBasis: '50%' }}>
@@ -55,22 +55,24 @@ export default function ProjectsInvolved(props) {
 						<div className="stat-card-body" style={{ minHeight: 120 }}>
 							<CardTitle className="title" style={{ flexBasis: '90%' }}>
 								FSP Assigned &nbsp;
-								{showAddBtn && (
+								{/* {showAddBtn && (
 									<a href="#add_project" onClick={handleAddBtnClick} title="Add project">
 										<i className="fas fa-plus"></i>
 									</a>
-								)}
+								)} */}
 							</CardTitle>
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 								<div style={{ flexBasis: '50%' }}>
 									<div>
-										<button
-											type="button"
-											className="btn waves-effect waves-light btn-outline-info"
-											style={{ borderRadius: '8px', marginRight: '15px', marginBottom: '10px' }}
-										>
-											Project Name
-										</button>
+										{fsps && (
+											<button
+												type="button"
+												className="btn waves-effect waves-light btn-outline-info"
+												style={{ borderRadius: '8px', marginRight: '15px', marginBottom: '10px' }}
+											>
+												{fsps}
+											</button>
+										)}
 									</div>
 								</div>
 							</div>

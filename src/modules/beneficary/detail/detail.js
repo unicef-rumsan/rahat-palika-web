@@ -1,5 +1,5 @@
 import React, { useContext, useCallback, useEffect, useState } from 'react';
-import { Row, Col, FormGroup, Label, InputGroup, Input } from 'reactstrap';
+import { Button, Col, FormGroup, Input, InputGroup, Label, Row } from 'reactstrap';
 import { useToasts } from 'react-toast-notifications';
 import QRCode from 'qrcode';
 
@@ -7,8 +7,6 @@ import Balance from '../../ui_components/balance';
 import DetailsCard from '../../global/DetailsCard';
 import BeneficiaryInfo from './beneficiaryInfo';
 import ProjectInvovled from '../../ui_components/projects';
-import BreadCrumb from '../../ui_components/breadcrumb';
-import PasscodeModal from '../../global/PasscodeModal';
 import ModalWrapper from '../../global/CustomModal';
 import SelectWrapper from '../../global/SelectWrapper';
 import { TOAST } from '../../../constants';
@@ -17,6 +15,7 @@ import { AppContext } from '../../../contexts/AppSettingsContext';
 import { BeneficiaryContext } from '../../../contexts/BeneficiaryContext';
 import { htmlResponse } from '../../../utils/printSingleBeneficiary';
 import { useHistory } from 'react-router-dom';
+import { getProjectFromLS } from '../../../utils/checkProject';
 
 const BenefDetails = ({ params }) => {
 	const { id } = params;
@@ -26,7 +25,6 @@ const BenefDetails = ({ params }) => {
 	const {
 		getBeneficiaryDetails,
 		getBeneficiaryBalance,
-		getBenfPackageBalance,
 		listProject,
 		getTotalIssuedTokens,
 		addBenfToProject
@@ -36,17 +34,16 @@ const BenefDetails = ({ params }) => {
 	const [basicInfo, setBasicInfo] = useState({});
 	const [extras, setExtras] = useState({});
 	const [projectList, setProjectList] = useState([]);
+	const [fsps, setFsps] = useState();
 	const [currentBalance, setCurrentBalance] = useState('');
 	const [allProjects, setAllProjects] = useState([]);
 	const [assignTokenAmount, setAssignTokenAmount] = useState('');
 
 	const [fetching, setFetching] = useState(false);
-	const [passcodeModal, setPasscodeModal] = useState(false);
 	const [projectModal, setProjectModal] = useState(false);
 	const [assignTokenModal, setAssignTokenModal] = useState(false);
 
 	const [selectedProject, setSelectedProject] = useState('');
-	const [totalPackageBalance, setTotalPackageBalance] = useState(null);
 	const [totalIssuedTokens, setTotalIssuedTokens] = useState(null);
 	const [addProjectModal, setAddProjectModal] = useState(false);
 
@@ -59,17 +56,10 @@ const BenefDetails = ({ params }) => {
 	const toggleProjectModal = () => {
 		// If opening modal, reset fields
 		if (!projectModal) {
-			// setShowAlert(false);
-			// setAvailableBalance('');
-			// setInputTokens('');
 			setSelectedProject('');
 		}
 		setProjectModal(!projectModal);
 	};
-
-	const togglePasscodeModal = useCallback(() => {
-		setPasscodeModal(!passcodeModal);
-	}, [passcodeModal]);
 
 	const handleAssignTokenChange = e => setAssignTokenAmount(e.target.value);
 
@@ -115,13 +105,11 @@ const BenefDetails = ({ params }) => {
 
 	const handleProjectChange = d => setSelectedProject(d.value);
 
-	const handleIssueToken = () => toggleProjectModal();
-
 	const handleIssueSubmit = e => {
 		e.preventDefault();
-		if (!selectedProject) return addToast('Please select project', TOAST.ERROR);
-		toggleProjectModal();
-		history.push(`/issue-budget/${selectedProject}/benf/${id}`);
+		const projectId = getProjectFromLS();
+		if (!projectId) return addToast('Please select project', TOAST.ERROR);
+		history.push(`/issue-budget/${projectId}/benf/${id}`);
 	};
 
 	const fetchCurrentBalance = useCallback(
@@ -135,10 +123,8 @@ const BenefDetails = ({ params }) => {
 				const { rahat } = agency.contracts;
 				setFetching(true);
 				const balance = await getBeneficiaryBalance(parsed_phone, rahat);
-				const res = await getBenfPackageBalance(parsed_phone, rahat);
 				const issuedTokens = await getTotalIssuedTokens(parsed_phone, rahat);
 				setTotalIssuedTokens(issuedTokens);
-				setTotalPackageBalance(res);
 				setCurrentBalance(balance);
 				setFetching(false);
 			} catch (err) {
@@ -146,7 +132,7 @@ const BenefDetails = ({ params }) => {
 				setFetching(false);
 			}
 		},
-		[appSettings, getBeneficiaryBalance, getBenfPackageBalance, getTotalIssuedTokens]
+		[appSettings, getBeneficiaryBalance, getTotalIssuedTokens]
 	);
 
 	const fetchBeneficiaryDetails = useCallback(async () => {
@@ -159,6 +145,7 @@ const BenefDetails = ({ params }) => {
 			});
 			setProjectList(projects);
 		}
+		if (details?.bank_account?.account_name) setFsps(details?.bank_account?.account_name);
 		await fetchCurrentBalance(details.phone);
 	}, [fetchCurrentBalance, getBeneficiaryDetails, id]);
 
@@ -182,8 +169,6 @@ const BenefDetails = ({ params }) => {
 
 	return (
 		<>
-			<PasscodeModal isOpen={passcodeModal} toggleModal={togglePasscodeModal}></PasscodeModal>
-
 			{/* Add to project modal */}
 			<ModalWrapper
 				title="Add to project"
@@ -218,20 +203,7 @@ const BenefDetails = ({ params }) => {
 						maxMenuHeight={150}
 						data={allProjects}
 						placeholder="--Select Project--"
-					/>{' '}
-					{/* <br />
-					<Label>Recent projects</Label>
-					<br />
-					{benfProjects.map(project => (
-						<button
-							type="button"
-							className="btn waves-effect waves-light btn-outline-info"
-							style={{ borderRadius: '8px' }}
-							onClick={handleProjectClick}
-						>
-							{project.label || 'button'}
-						</button>
-					))} */}
+					/>
 				</FormGroup>
 			</ModalWrapper>
 
@@ -254,40 +226,42 @@ const BenefDetails = ({ params }) => {
 					</InputGroup>
 				</FormGroup>
 			</ModalWrapper>
-
-			<p className="page-heading">Beneficiary</p>
-			<BreadCrumb redirect_path="beneficiaries" root_label="Beneficiary" current_label="Details" />
-			<Row>
-				<Col md="7">
-					<DetailsCard
-						fetching={fetching}
-						handleButtonClick={toggleAssignTokenModal}
-						title="Beneficiary Details"
-						button_name="Generate QR Code"
-						name="Name"
-						name_value={basicInfo.name ? basicInfo.name : ''}
-						imgUrl={basicInfo.photo ? basicInfo.photo : ''}
-						total="Issued Tokens"
-						total_value={totalIssuedTokens}
-					/>
-				</Col>
-				<Col md="5">
-					<Balance
-						action="issue_token"
-						title="Balance"
-						button_name="Issue"
-						token_data={currentBalance}
-						package_data={totalPackageBalance}
-						fetching={fetching}
-						loading={loading}
-						handleIssueToken={handleIssueToken}
-					/>
-				</Col>
-			</Row>
-
+			<div className="container-fluid" style={{ marginTop: '100px' }}>
+				<div className="mb-3 ml-2">
+					<Button className="btn" onClick={() => history.push('/projects/current')}>
+						Go Back
+					</Button>
+				</div>
+				<Row>
+					<Col md="7">
+						<DetailsCard
+							fetching={fetching}
+							handleButtonClick={toggleAssignTokenModal}
+							title="Beneficiary Details"
+							button_name="Generate QR Code"
+							name="Name"
+							name_value={basicInfo.name ? basicInfo.name : ''}
+							imgUrl={basicInfo.photo ? basicInfo.photo : ''}
+							total="Issued Tokens"
+							total_value={totalIssuedTokens}
+						/>
+					</Col>
+					<Col md="5">
+						<Balance
+							action="issue_token"
+							title="Balance"
+							button_name="Issue"
+							token_data={currentBalance}
+							fetching={fetching}
+							loading={loading}
+							handleIssueToken={handleIssueSubmit}
+						/>
+					</Col>
+				</Row>
+			</div>
 			{basicInfo && <BeneficiaryInfo basicInfo={basicInfo} extras={extras} />}
 
-			<ProjectInvovled handleAddBtnClick={handleAddBtnClick} showAddBtn={true} projects={projectList} />
+			<ProjectInvovled handleAddBtnClick={handleAddBtnClick} showAddBtn={true} projects={projectList} fsps={fsps} />
 		</>
 	);
 };
