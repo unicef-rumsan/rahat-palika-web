@@ -236,7 +236,7 @@ const Index = ({ params }) => {
 					Go Back
 				</Button>
 			</div>
-			<Row>
+			<Row className="mt-3">
 				<Col md="7">
 					<Card>
 						<div className="stat-card-body" style={{ minHeight: 120 }}>

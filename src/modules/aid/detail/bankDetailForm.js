@@ -20,8 +20,15 @@ const BankDetailForm = ({ bankData, handleBankData }) => {
 			<Row>
 				<Col>
 					<FormGroup>
-						<Label>Swift Code</Label>
-						<Input type="text" name="swiftCode" readOnly value={swiftCode || ''} />
+						<Label>Bank Name</Label>
+						<FspSelector
+							fsp={selectorFsp}
+							onChange={e => {
+								matchFsp(e);
+							}}
+							label={false}
+							projectFsp={true}
+						/>
 					</FormGroup>
 					<FormGroup>
 						<Label>Account Name</Label>
@@ -36,15 +43,8 @@ const BankDetailForm = ({ bankData, handleBankData }) => {
 				</Col>
 				<Col>
 					<FormGroup>
-						<Label>Bank Name</Label>
-						<FspSelector
-							fsp={selectorFsp}
-							onChange={e => {
-								matchFsp(e);
-							}}
-							label={false}
-							projectFsp={true}
-						/>
+						<Label>Swift Code</Label>
+						<Input type="text" name="swiftCode" readOnly value={swiftCode || ''} />
 					</FormGroup>
 					<FormGroup>
 						<Label>Account Number</Label>
