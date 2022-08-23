@@ -2,11 +2,11 @@ name: Stage CI/CD
 on:
   push:
     branches:
-      - "stage"
+      - stage
 
   pull_request:
     branches:
-      - "stage"
+      - stage
 
 env:
   CI: false
