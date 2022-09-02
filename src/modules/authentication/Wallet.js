@@ -9,8 +9,9 @@ import EthCrypto from 'eth-crypto';
 import WalletService from '../../utils/blockchain/wallet';
 import DataService from '../../services/db';
 import { saveUser, saveUserToken } from '../../utils/sessionManager';
+import { func } from 'prop-types';
 
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 
 const Wallet = () => {
 	const [showHide, setShowHide] = useState('d-none');
@@ -18,6 +19,8 @@ const Wallet = () => {
 	const [email, setEmail] = useState('');
 	const [isWalletLogin, setIsWalletLogin] = useState(false);
 	const [tempIdentity, setTempIdentity] = useState(null);
+	const [otpLogin, setOtpLogin] = useState(false);
+	const [otp, setOtp] = useState(null);
 
 	const toggleLogin = e => {
 		e.preventDefault();
@@ -34,36 +37,70 @@ const Wallet = () => {
 			setShowHide('');
 		}
 		if (result.status) {
-			const { value: otp } = await Swal.fire({
-				title: 'Enter OTP Code',
-				input: 'number',
-				inputLabel: 'A 6 Digit Code has been sent to your email address',
-				allowOutsideClick: true,
-				inputValidator: value => {
-					if (!value) {
-						return 'Please enter 6 digit code sent to your email';
-					}
-					if (value.length !== 6) return 'Must be 6 digit';
-				}
-			});
-			if (otp) {
-				const isOTPValid = await verifyOTP({ otp, encryptionKey: tempIdentity.publicKey });
-				saveUser(isOTPValid.user);
-				saveUserToken(isOTPValid.token);
-				const encryptedData = EthCrypto.cipher.parse(isOTPValid.key);
-				const decryptedKey = await EthCrypto.decryptWithPrivateKey(tempIdentity.privateKey, encryptedData);
-				DataService.savePrivateKey(decryptedKey);
-				const wallet = await WalletService.loadFromPrivateKey(decryptedKey);
-				DataService.save(wallet);
-				window.location.replace('/');
-			}
+			setOtpLogin(true);
+			setCounter(59);
 		}
+		// if (result.status) {
+		// 	// const { value: otp } = await Swal.fire({
+		// 	// 	title: 'Enter OTP Code',
+		// 	// 	input: 'number',
+		// 	// 	inputLabel: 'A 6 Digit Code has been sent to your email address',
+		// 	// 	allowOutsideClick: true,
+		// 	// 	inputValidator: value => {
+		// 	// 		if (!value) {
+		// 	// 			return 'Please enter 6 digit code sent to your email';
+		// 	// 		}
+		// 	// 		if (value.length !== 6) return 'Must be 6 digit';
+		// 	// 	}
+		// 	// });
+		// 	if (otp) {
+		// 		const isOTPValid = await verifyOTP({ otp, encryptionKey: tempIdentity.publicKey });
+		// 		saveUser(isOTPValid.user);
+		// 		saveUserToken(isOTPValid.token);
+		// 		const encryptedData = EthCrypto.cipher.parse(isOTPValid.key);
+		// 		const decryptedKey = await EthCrypto.decryptWithPrivateKey(tempIdentity.privateKey, encryptedData);
+		// 		DataService.savePrivateKey(decryptedKey);
+		// 		const wallet = await WalletService.loadFromPrivateKey(decryptedKey);
+		// 		DataService.save(wallet);
+		// 		window.location.replace('/');
+		// 	}
+		// }
 	};
+	const [min, setMin] = React.useState(4);
+
+	const [counter, setCounter] = React.useState(null);
+	React.useEffect(() => {
+		if (counter === 0) {
+			if (min === 0) return;
+			setCounter(59);
+			setMin(min - 1);
+		}
+		const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+		return () => clearInterval(timer);
+	}, [counter, min]);
 
 	useEffect(() => {
 		const identity = createRandomIdentity();
 		setTempIdentity(identity);
 	}, []);
+
+	const handleVerify = async () => {
+		if (otp) {
+			const isOTPValid = await verifyOTP({ otp, encryptionKey: tempIdentity.publicKey });
+			saveUser(isOTPValid.user);
+			saveUserToken(isOTPValid.token);
+			const encryptedData = EthCrypto.cipher.parse(isOTPValid.key);
+			const decryptedKey = await EthCrypto.decryptWithPrivateKey(tempIdentity.privateKey, encryptedData);
+			DataService.savePrivateKey(decryptedKey);
+			const wallet = await WalletService.loadFromPrivateKey(decryptedKey);
+			DataService.save(wallet);
+			window.location.replace('/');
+		}
+	};
+
+	const handleOtpInput = e => {
+		setOtp(e.target.value);
+	};
 
 	return (
 		<>
@@ -88,11 +125,11 @@ const Wallet = () => {
 					</p> */}
 					<div className=" text-center">
 						<p className="text-title">Rahat Palika App</p>
-						{!isWalletLogin && (
+						{!isWalletLogin && !otpLogin && (
 							<div className="mt-4">
 								<Row>
 									<Col>
-										<Card style={{ padding: '20px', width: '25rem' }}>
+										<Card style={{ padding: '20px', width: '23rem' }}>
 											<CardTitle className="text-left">
 												<h5>Sign In</h5>
 											</CardTitle>
@@ -133,7 +170,45 @@ const Wallet = () => {
 								</Row>
 							</div>
 						)}
-						{isWalletLogin && <WalletComponent toggleLogin={toggleLogin} />}
+						{isWalletLogin && !otpLogin && <WalletComponent toggleLogin={toggleLogin} />}
+						{otpLogin && (
+							<>
+								<Card style={{ padding: '20px', width: '23rem' }}>
+									<p>
+										<b>If you didn't receive a code, Resend</b>
+									</p>
+									<div className="p-2">
+										<Input className="mt-2 custom-number-input" onChange={handleOtpInput} type="number" name="number" />
+									</div>
+
+									<div className="mt-2">
+										<p fontWeight={500} align="center" color="textSecondary">
+											{' '}
+											Resend OTP in{' '}
+											<span style={{ color: '#217EC2', fontWeight: 'bold' }}>
+												{' '}
+												0{min}:{counter}
+											</span>{' '}
+										</p>
+									</div>
+									<div className="text-center">
+										<Button
+											type="button"
+											onClick={handleVerify}
+											size="md"
+											style={{ width: '90%', backgroundColor: '#326481' }}
+										>
+											Verify
+										</Button>
+									</div>
+									<p className="mt-2" style={{ color: '#326481' }}>
+										<a href="#">
+											<u onClick={getOtpAndLogin}>Resend OTP</u>
+										</a>
+									</p>
+								</Card>
+							</>
+						)}
 					</div>
 					<p className="text-privacy">
 						By signing up you acknowledge the{' '}

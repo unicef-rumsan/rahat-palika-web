@@ -2,11 +2,10 @@ import React from 'react';
 import { Card, CardTitle, Col, Row } from 'reactstrap';
 
 import '../../assets/css/project.css';
-import { PROJECT_STATUS } from '../../constants';
 import { formatBalanceAndCurrency } from '../../utils';
 
 export default function DetailsCard(props) {
-	const { title, button_name, name, name_value, total, total_value, handleButtonClick } = props;
+	const { title, name, name_value, total, total_value } = props;
 
 	return (
 		<div>
@@ -17,28 +16,6 @@ export default function DetailsCard(props) {
 							<CardTitle className="title" style={{ flexBasis: '70%' }}>
 								{title || 'No Title'}
 							</CardTitle>
-						</Col>
-						<Col>
-							<div style={{ float: 'right' }}>
-								{title === 'Project Details' ? (
-									<button
-										type="none"
-										className={`btn btn-${PROJECT_STATUS.CLOSED ? 'danger' : 'success'}`}
-										style={{ borderRadius: '8px', cursor: 'default' }}
-									>
-										{PROJECT_STATUS.CLOSED ? 'Closed' : 'Active'}
-									</button>
-								) : (
-									<button
-										onClick={handleButtonClick}
-										type="button"
-										className="btn waves-effect waves-light btn-outline-info"
-										style={{ borderRadius: '8px' }}
-									>
-										{button_name || 'button'}
-									</button>
-								)}
-							</div>
 						</Col>
 					</Row>
 					<Row>
@@ -51,7 +28,7 @@ export default function DetailsCard(props) {
 							</div>
 						</Col>
 						<Col md="4" sm="12">
-							<p className="card-font-bold">{formatBalanceAndCurrency(total_value) || '0'}</p>
+							<p className="card-font-medium">{formatBalanceAndCurrency(total_value) || '0'}</p>
 							<div className="sub-title">{total || 'No Label'}</div>
 						</Col>
 					</Row>

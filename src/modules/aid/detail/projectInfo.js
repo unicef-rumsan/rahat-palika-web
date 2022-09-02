@@ -9,7 +9,7 @@ import ModalWrapper from '../../global/CustomModal';
 import { MAX_QR_GEN } from '../../../constants';
 
 export default function ProjectInfo({ projectDetails }) {
-	const { project_manager, location, description, created_at, serial_index } = projectDetails;
+	const { project_manager, location, description, serial_index, status, start_date, end_date } = projectDetails;
 
 	const [qrGenModal, setQrGenModal] = useState(false);
 	const [qrGenData, setQrGenData] = useState({ min: 0, max: 0, projectVersion: 0, amount: null });
@@ -77,7 +77,7 @@ export default function ProjectInfo({ projectDetails }) {
 							</CardTitle>
 						</Col>
 						<Col>
-							<div style={{ flex: 1, padding: 2, float: 'right' }}>
+							{/* <div style={{ flex: 1, padding: 2, float: 'right' }}>
 								<button
 									onClick={toggleQrGen}
 									type="button"
@@ -86,7 +86,7 @@ export default function ProjectInfo({ projectDetails }) {
 								>
 									Pre-Generate Qr code
 								</button>
-							</div>
+							</div> */}
 						</Col>
 					</Row>
 					<Row>
@@ -102,16 +102,28 @@ export default function ProjectInfo({ projectDetails }) {
 								<div className="sub-title">Location</div>
 							</div>
 						</Col>
-						<Col md="6" sm="12">
+						<Col md="4" sm="12">
 							<div style={{ marginBottom: '25px' }}>
-								<p className="card-font-medium">{moment(created_at).format('ll')}</p>
-								<div className="sub-title">Created Date</div>
+								<p className="card-font-medium">{start_date ? moment(start_date).format('ll') : '-'}</p>
+								<div className="sub-title">Start Date</div>
+							</div>
+							<div style={{ marginBottom: '25px' }}>
+								<p className="card-font-medium">{end_date ? moment(end_date).format('ll') : '-'}</p>
+								<div className="sub-title">End Date</div>
+							</div>
+						</Col>
+						<Col md="2" sm="12">
+							<div style={{ marginBottom: '25px' }}>
+								<p className={`card-font-medium text-${status === 'active' ? 'success' : 'danger'}`}>
+									{status ? status.toUpperCase() : '-'}
+								</p>
+								<div className="sub-title">Status</div>
 							</div>
 						</Col>
 					</Row>
 
 					<p className="sub-title" style={{ textAlign: 'justify' }}>
-						{description || 'Project description not available...'}
+						{description || ''}
 					</p>
 				</div>
 			</Card>

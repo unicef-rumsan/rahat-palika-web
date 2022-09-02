@@ -35,7 +35,6 @@
 		"prettier": "2.2.1"
 	},
 	"dependencies": {
-		"apexcharts": "^3.28.3",
 		"axios": "^0.21.1",
 		"bootstrap-switch-button-react": "^1.2.0",
 		"chart.js": "2.9.3",

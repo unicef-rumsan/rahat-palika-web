@@ -29,7 +29,7 @@ export default (state, action) => {
 				}
 			};
 
-		case `${ACTION.BENEF_LIST_SUCCSS}`:
+		case `${ACTION.BENEF_LIST_SUCCESS}`:
 			return {
 				...state,
 				beneficiary_list: result.data,

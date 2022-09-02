@@ -1,9 +1,9 @@
 import axios from 'axios';
-import {ethers} from 'ethers';
+import { ethers } from 'ethers';
 import API from '../constants/api';
 import { getUserToken } from '../utils/sessionManager';
 import CONTRACT from '../constants/contracts';
-import { getContractByProvider,generateMultiCallData } from '../blockchain/abi';
+import { getContractByProvider, generateMultiCallData } from '../blockchain/abi';
 import { calculateTotalPackageBalance } from './aid';
 
 const abiCoder = new ethers.utils.AbiCoder();
@@ -16,7 +16,7 @@ const mapTestContract = contract => ({
 });
 
 export async function getVendorBalance(contract_address, wallet_addr) {
-	const contract = await getContractByProvider(contract_address, CONTRACT.RAHAT_ERC20);
+	const contract = getContractByProvider(contract_address, CONTRACT.RAHAT_ERC20);
 	const myContract = mapTestContract(contract);
 	const data = await myContract.balanceOf(wallet_addr);
 	if (!data) return null;
@@ -24,17 +24,17 @@ export async function getVendorBalance(contract_address, wallet_addr) {
 }
 
 export async function getVendorsBalances(contract_address, vendorAddresses) {
-	const contract  = await getContractByProvider(contract_address,CONTRACT.RAHAT_ERC20);
-	const callData = vendorAddresses.map((address) => generateMultiCallData(CONTRACT.RAHAT_ERC20,"balanceOf",[address]))
+	const contract = await getContractByProvider(contract_address, CONTRACT.RAHAT_ERC20);
+	const callData = vendorAddresses.map(address => generateMultiCallData(CONTRACT.RAHAT_ERC20, 'balanceOf', [address]));
 	const data = await contract.callStatic.multicall(callData);
-    const decodedData = data.map((el) => abiCoder.decode(['uint256'],el));
-	const vendorBalances = decodedData.map((el) => el[0].toNumber());
-	return vendorBalances
+	const decodedData = data.map(el => abiCoder.decode(['uint256'], el));
+	const vendorBalances = decodedData.map(el => el[0].toNumber());
+	return vendorBalances;
 }
 
-export async function getTotalVendorsBalances(contract_address,vendorAddresses){
-	const balances = await getVendorsBalances(contract_address,vendorAddresses);
-	return balances.reduce((prev,curr) => prev+curr,0);
+export async function getTotalVendorsBalances(contract_address, vendorAddresses) {
+	const balances = await getVendorsBalances(contract_address, vendorAddresses);
+	return balances.reduce((prev, curr) => prev + curr, 0);
 }
 
 export async function getVendorPackageBalance(contract_address, wallet_addresses, tokenIds) {

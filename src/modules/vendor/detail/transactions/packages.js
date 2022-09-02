@@ -32,7 +32,7 @@ const TransactionHistory = props => {
 							</thead>
 							<tbody>
 								{transactions.length > 0 ? (
-									transactions.map((tx,i) => {
+									transactions.map((tx, i) => {
 										return (
 											<tr key={i}>
 												<td>{tx.from}</td>
@@ -53,7 +53,7 @@ const TransactionHistory = props => {
 									})
 								) : (
 									<tr>
-										<td colSpan={2}>No transaction available</td>
+										<td colSpan={5}>No transaction available</td>
 									</tr>
 								)}
 							</tbody>
