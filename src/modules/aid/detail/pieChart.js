@@ -36,7 +36,7 @@ export default function Chart({ available_tokens, total_tokens, fetching, date, 
 								className="btn waves-effect waves-light btn-outline-info"
 								style={{ borderRadius: '8px', float: 'right' }}
 							>
-								Activate
+								Trigger Response
 							</button>
 						</Col>
 					</Row>
