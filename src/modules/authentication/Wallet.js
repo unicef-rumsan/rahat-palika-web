@@ -141,7 +141,7 @@ const Wallet = () => {
 													<Input
 														type="email"
 														name="email"
-														placeholder="Your Email"
+														placeholder="Enter Your Email"
 														onChange={e => setEmail(e.target.value)}
 													/>
 												</FormGroup>
