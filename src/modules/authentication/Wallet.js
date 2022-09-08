@@ -29,6 +29,7 @@ const Wallet = () => {
 			event.preventDefault();
 			getOtpAndLogin(event);
 		}
+		return;
 	};
 
 	const getOtpAndLogin = async e => {
