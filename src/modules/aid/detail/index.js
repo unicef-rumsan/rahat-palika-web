@@ -6,12 +6,16 @@ import { useToasts } from 'react-toast-notifications';
 import { AidContext } from '../../../contexts/AidContext';
 import { AppContext } from '../../../contexts/AppSettingsContext';
 import DetailsCard from '../../global/DetailsCard';
+import MaskLoader from '../../global/MaskLoader';
 import ProjectInfo from './projectInfo';
 import PieChart from './pieChart';
 import Tabs from './tab';
+import confirm from 'reactstrap-confirm';
 import { TOAST, PROJECT_STATUS } from '../../../constants';
 import { getProjectFromLS, setProjectToLS, getActiveProject } from '../../../utils/checkProject';
 import DataService from '../../../services/db';
+import { BC } from '../../../services/ChainService';
+
 
 export default function Index(props) {
 	const { addToast } = useToasts();
@@ -29,7 +33,16 @@ export default function Index(props) {
 		getAidBalance,
 		setAidBalance
 	} = useContext(AidContext);
-	const { appSettings } = useContext(AppContext);
+	const { palikaWallet: wallet, appSettings } = useContext(AppContext);
+	//Trigger response
+	const [isTriggered, setIsTriggered] = useState(false);
+	const [checkingConfirmation, setCheckingConfirmation] = useState(true);
+	const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
+	const [activated, setActivated] = useState(false);
+	const [loading, showLoading] = useState(false);
+
+	const activateResponse = () => changeResponseStatus(true);
+	const deactivateResponse = () => changeResponseStatus(false);
 
 	const handleStatusChange = status => {
 		const success_label = status === PROJECT_STATUS.CLOSED ? 'Closed' : 'Activated';
@@ -93,6 +106,72 @@ export default function Index(props) {
 		}
 	}, [addToast, appSettings, getAidBalance, getProjectCapital, projectId, setAidBalance, setProjectCapital]);
 
+	const changeResponseStatus = async isActivate => {
+		if (!(appSettings.agency?.contracts?.rahat_trigger && wallet)) return;
+		const result = await confirm({
+			title: 'Are you sure?',
+			message: `You are providing your consent to ${activated ? 'deactivate' : 'activate'
+				} this response. Your consent will be permanently recorded in blockchain. This will automatically activate the response if consents threshold is reached.`,
+			confirmColor: 'danger',
+			cancelText: 'Cancel',
+			confirmText: 'Yes, I am sure, proceed!',
+			size: 'md'
+		});
+		if (result) {
+			showLoading(true);
+			try {
+				if (isActivate) {
+					const tx = await BC.activateResponse(appSettings.agency.id, {
+						contractAddress: appSettings.agency.contracts.rahat_trigger,
+						wallet
+					});
+					const receipt = await tx.wait();
+					console.log({ receipt })
+					if (receipt.status) {
+						setIsTriggered(true)
+						showLoading(false)
+					}
+				} else {
+					const tx = await BC.deactivateResponse(appSettings.agency.id, {
+						contractAddress: appSettings.agency.contracts.rahat_trigger,
+						wallet
+					});
+					const receipt = await tx.wait();
+					console.log({ receipt })
+					if (receipt.status) {
+						setIsTriggered(false)
+						showLoading(false)
+					}
+
+				}
+				//	await fetchProjectStatus();
+			} catch (e) {
+				console.log(e)
+				showLoading(false);
+			}
+		}
+	};
+
+	const checkTriggerStatus = useCallback(async () => {
+		try {
+			const tStatus = await BC.checkTriggerConfiramtion(appSettings.agency.id, {
+				contractAddress: appSettings.agency.contracts.rahat_trigger,
+				wallet
+			})
+
+			if (tStatus) {
+				setIsTriggered(true);
+			}
+			else setIsTriggered(false)
+		}
+		catch (e) {
+			console.log(e)
+		}
+		finally {
+			setCheckingConfirmation(false)
+		}
+	}, [appSettings, wallet])
+
 	useEffect(() => {
 		async function assignProjectId() {
 			if (id === 'current') {
@@ -117,8 +196,15 @@ export default function Index(props) {
 	useEffect(() => {
 		fetchPackageAndTokenBalance();
 	}, [fetchPackageAndTokenBalance]);
+
+	useEffect(() => {
+		if (!(appSettings.agency?.contracts && wallet)) return;
+		checkTriggerStatus()
+	}, [checkTriggerStatus, appSettings, wallet]);
+
 	return (
 		<>
+			<MaskLoader message="Loading data from Blockchain, please wait..." isOpen={loading} />
 			<div style={{ height: '100px' }}></div>
 			<Row>
 				<Col md="7">
@@ -143,6 +229,10 @@ export default function Index(props) {
 							projectId={projectId}
 							date={date}
 							onClick={() => fetchPackageAndTokenBalance()}
+							activateResponse={() => activateResponse()}
+							deactivateResponse={() => deactivateResponse()}
+							isTriggered={isTriggered}
+							checkingConfirmation={checkingConfirmation}
 						/>
 					)}
 				</Col>
