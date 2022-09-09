@@ -126,7 +126,6 @@ export default function Index(props) {
 						wallet
 					});
 					const receipt = await tx.wait();
-					console.log({ receipt })
 					if (receipt.status) {
 						setIsTriggered(true)
 						showLoading(false)
@@ -137,7 +136,6 @@ export default function Index(props) {
 						wallet
 					});
 					const receipt = await tx.wait();
-					console.log({ receipt })
 					if (receipt.status) {
 						setIsTriggered(false)
 						showLoading(false)

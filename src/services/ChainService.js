@@ -36,14 +36,14 @@ export const BC = {
 		return contract.adminConfirmations(agencyId, wallet.address)
 	},
 
-	async activateResponse(projectId, { contractAddress, wallet }) {
+	async activateResponse(agencyId, { contractAddress, wallet }) {
 		const contract = await TriggerResponseContract(contractAddress, wallet);
-		return contract.activateResponse(projectId);
+		return contract.activateResponse(agencyId);
 	},
 
-	async deactivateResponse(projectId, { contractAddress, wallet }) {
+	async deactivateResponse(agencyId, { contractAddress, wallet }) {
 		const contract = await TriggerResponseContract(contractAddress, wallet);
-		return contract.deactivateResponse(projectId);
+		return contract.deactivateResponse(agencyId);
 	},
 
 	async changeVendorStatus(vendorAddress, isActive, { contractAddress, wallet }) {
