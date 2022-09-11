@@ -4,5 +4,6 @@ module.exports = {
 	RAHATADMIN: 'RahatAdmin',
 	TEST: 'Test',
 	RAHAT_ERC20: 'RahatERC20',
-	RAHAT_ERC1155: 'RahatERC1155'
+	RAHAT_ERC1155: 'RahatERC1155',
+	RAHAT_TRIGGER_RESPONSE: 'RahatTriggerResponse'
 };
