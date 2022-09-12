@@ -3,11 +3,12 @@ import { Card, CardBody, CardTitle, Col, Label, Row } from 'reactstrap';
 import { Pie } from 'react-chartjs-2';
 import Loading from '../../global/Loading';
 
-export default function Chart({ available_tokens, total_tokens, fetching, date, onClick }) {
+export default function Chart({ available_tokens, total_tokens, fetching, date, onClick, isTriggered, checkingConfirmation, activateResponse, deactivateResponse }) {
 	const [pieData, setPieData] = useState({ labels: [], datasets: [] });
 	const handleRefresh = () => {
 		onClick();
 	};
+
 	useEffect(() => {
 		if (available_tokens && total_tokens)
 			setPieData({
@@ -31,13 +32,25 @@ export default function Chart({ available_tokens, total_tokens, fetching, date, 
 							<CardTitle className="title">Balance</CardTitle>
 						</Col>
 						<Col>
-							<button
-								type="button"
-								className="btn waves-effect waves-light btn-outline-info"
-								style={{ borderRadius: '8px', float: 'right' }}
-							>
-								Activate
-							</button>
+							{!checkingConfirmation ? (
+								!isTriggered ? (<button
+									type="button"
+									className="btn waves-effect waves-light btn-outline-success"
+									style={{ borderRadius: '8px', float: 'right' }}
+									onClick={() => activateResponse()}
+								>
+									Trigger Response
+								</button>) : (<button
+									type="button"
+									className="btn waves-effect waves-light btn-outline-danger"
+									style={{ borderRadius: '8px', float: 'right' }}
+									onClick={() => deactivateResponse()}
+
+								>
+									Deactivate Response
+								</button>)) : ('')}
+
+
 						</Col>
 					</Row>
 					{fetching ? (

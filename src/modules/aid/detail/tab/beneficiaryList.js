@@ -310,43 +310,7 @@ const List = ({ projectId }) => {
 			</ModalWrapper>
 
 			<div className="container-fluid">
-				<Row className="d-none d-sm-block">
-					<div style={{ flex: 1, padding: 10 }}>
-						<button
-							onClick={() => toggleAmountModal(ACTION.BULK_ISSUE)}
-							type="button"
-							className="btn waves-effect waves-light btn-outline-info"
-							style={{ borderRadius: '8px', marginRight: '20px' }}
-						>
-							Bulk Token Issue
-						</button>
-						<button
-							type="button"
-							onClick={() => toggleAmountModal(ACTION.BULK_QR)}
-							className="btn waves-effect waves-light btn-outline-info"
-							style={{ borderRadius: '8px' }}
-						>
-							Bulk Generate QR Code
-						</button>
-						<div style={{ marginTop: '-1px', float: 'right' }}>
-							<button
-								type="button"
-								onClick={handleFileUploadClick}
-								className="btn waves-effect waves-light btn-outline-info"
-								style={{ borderRadius: '8px' }}
-							>
-								Upload Beneficiaries
-							</button>
-							<input
-								type="file"
-								ref={hiddenFileInput}
-								onChange={handleFileChange}
-								accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-								style={{ display: 'none' }}
-							/>
-						</div>
-					</div>
-				</Row>
+				
 				<Row className="d-block d-sm-none">
 					<div>
 						<button
